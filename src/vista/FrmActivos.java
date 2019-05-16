@@ -630,11 +630,11 @@ public class FrmActivos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnEliminar;
-    private javax.swing.JButton btnInsertar;
-    private javax.swing.JButton btnModificar;
-    private javax.swing.JComboBox<String> cbxMarca;
+    public javax.swing.JButton btnBuscar;
+    public javax.swing.JButton btnEliminar;
+    public javax.swing.JButton btnInsertar;
+    public javax.swing.JButton btnModificar;
+    public javax.swing.JComboBox<String> cbxMarca;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
@@ -681,12 +681,12 @@ public class FrmActivos extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JPanel jplActivos;
-    private javax.swing.JTable jtbActivos;
-    private javax.swing.JTextField txtCantidad;
-    private javax.swing.JTextField txtCodigoActivos;
-    private javax.swing.JTextField txtDescripcion;
-    private javax.swing.JTextField txtIDActivo;
-    private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtPeso;
+    public javax.swing.JTable jtbActivos;
+    public javax.swing.JTextField txtCantidad;
+    public javax.swing.JTextField txtCodigoActivos;
+    public javax.swing.JTextField txtDescripcion;
+    public javax.swing.JTextField txtIDActivo;
+    public javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtPeso;
     // End of variables declaration//GEN-END:variables
 }

@@ -25,6 +25,10 @@ public class Producto {
         this.marca = marca;
         this.stock = stock;
     }
+    
+    public Producto (){
+        
+    }
     private Double peso;
     private int marca;
     private int stock;
