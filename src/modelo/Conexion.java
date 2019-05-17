@@ -22,7 +22,7 @@ public class Conexion {
     
     public Connection getConnection(){
         try{
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(this.URL, this.USER, this.PASSWORD);
             
         }catch(ClassNotFoundException | SQLException e){

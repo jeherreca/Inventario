@@ -9,6 +9,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasProducto;
@@ -19,26 +22,70 @@ import vista.FrmActivos;
  *
  * @author Administrator
  */
-public class CtlrProducto implements ActionListener {
+public final class CtlrProducto implements ActionListener {
     private Producto producto;
     private ConsultasProducto cproducto ;
     private FrmActivos vproducto ;
     private DefaultTableModel modelo;
+    private DefaultComboBoxModel cbxmodelo;
     
     public CtlrProducto(Producto producto, ConsultasProducto cproducto, FrmActivos vproducto) {
         this.producto = producto;
         this.cproducto = cproducto;
         this.vproducto = vproducto;
         this.modelo = new DefaultTableModel();
+        this.cbxmodelo = new DefaultComboBoxModel();
+        this.modelo.addColumn("Código");
+        this.modelo.addColumn("Nombre");
+        this.modelo.addColumn("Descripción");
+        this.modelo.addColumn("Peso");
+        this.modelo.addColumn("Marca");
+        this.modelo.addColumn("Cantidad");
+        llenarComboBox();
+        llenarTabla();
+        this.vproducto.jtbActivos.addMouseListener(new java.awt.event.MouseAdapter(){
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt){
+                getSelectedProducto();
+            }
+        });
         this.vproducto.jtbActivos.setModel(modelo);
+        this.vproducto.cbxMarca.setModel(cbxmodelo);
         this.vproducto.btnEliminar.addActionListener(this);
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
         this.vproducto.btnModificar.addActionListener(this);
     }
     
-    public void llenarTabla(Producto[] productos){
-        productos =
+    public void llenarTabla(){
+        ArrayList<Producto> productos = cproducto.getProductos();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            modelo.removeRow(i);
+        }
+        Object[] array = new Object[6];
+        for (int i = 0; i < productos.size(); i++) {
+            array[0] = productos.get(i).getCodigo();
+            array[1] = productos.get(i).getNombre();
+            array[2] = productos.get(i).getDescripcion();
+            array[3] = productos.get(i).getPeso();
+            array[4] = productos.get(i).getMarca();
+            array[5] = productos.get(i).getStock();
+            modelo.addRow(array);
+        }
+    }
+    
+    public void getSelectedProducto(){
+        int fila = vproducto.jtbActivos.getSelectedRow();
+        System.out.println(fila);
+        String codigo = vproducto.jtbActivos.getValueAt(fila,0).toString();
+        String[] rs =cproducto.buscarElemento(codigo);
+            vproducto.txtIDActivo.setText(rs[0]);
+            vproducto.txtCodigoActivos.setText(rs[1]);
+            vproducto.txtNombre.setText(rs[2]);
+            vproducto.txtDescripcion.setText(rs[3]);
+            vproducto.txtPeso.setText(rs[4]);
+            vproducto.cbxMarca.setSelectedItem(rs[5]);
+            vproducto.txtCantidad.setText(rs[6]);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -62,9 +109,11 @@ public class CtlrProducto implements ActionListener {
                 if (cproducto.eliminar(producto)) {
                     JOptionPane.showMessageDialog(null, "Producto eliminado");
                     limpiar();
+                    llenarTabla();
                 }else{
                     JOptionPane.showMessageDialog(null, "Error al eliminar");
                     limpiar();
+                    llenarTabla();
                 }
             }else{
                 if (e.getSource() == vproducto.btnInsertar) {
@@ -77,9 +126,11 @@ public class CtlrProducto implements ActionListener {
                     if (cproducto.insertar(producto)) {
                         JOptionPane.showMessageDialog(null, "Producto insertado");
                         limpiar();
+                        llenarTabla();
                     }else{
                         JOptionPane.showMessageDialog(null, "Error al insertar producto");
                         limpiar ();
+                        llenarTabla();
                     }
                     
                 }else{
@@ -88,15 +139,18 @@ public class CtlrProducto implements ActionListener {
                         producto.setCodigo(vproducto.txtCodigoActivos.getText());
                         producto.setNombre(vproducto.txtNombre.getText());
                         producto.setDescripcion(vproducto.txtDescripcion.getText());
+                        producto.setPeso(Double.parseDouble(vproducto.txtPeso.getTex));
                         producto.setMarca(Integer.parseInt(String.valueOf(vproducto.cbxMarca.getSelectedItem())));
                         producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                         
                         if (cproducto.modificar(producto)) {
                             JOptionPane.showMessageDialog(null, "Producto modificado");
                             limpiar();
+                            llenarTabla();
                         }else{
                             JOptionPane.showMessageDialog(null, "Error al modificar producto");
                             limpiar();
+                            llenarTabla();
                         }
                     }
                 }
@@ -112,6 +166,13 @@ public class CtlrProducto implements ActionListener {
         vproducto.txtDescripcion.setText("");
         vproducto.txtPeso.setText("");
         vproducto.txtCantidad.setText("");
+    }
+
+    private void llenarComboBox() {
+        ArrayList<Integer> marcas = cproducto.getMarcas();
+        for (int i = 0; i < marcas.size(); i++) {
+            cbxmodelo.addElement(marcas.get(i));
+        }
     }
     
     

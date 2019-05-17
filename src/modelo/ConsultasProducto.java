@@ -9,13 +9,72 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  *
  * @author Administrator
  */
 public class ConsultasProducto extends Conexion{
-    
+    public ArrayList<Integer> getMarcas(){
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection con = getConnection();
+        
+        String sql = "SELECT idmarca FROM marca";
+        ArrayList<Integer> marcas = new ArrayList<>();
+        
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                marcas.add(rs.getInt("idmarca"));
+            }
+            return marcas;
+            
+            
+        }catch(SQLException e){
+            System.out.println(e);
+            return marcas;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
+    public ArrayList<Producto> getProductos(){
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection con = getConnection();
+        
+        String sql = "SELECT * FROM activo";
+        ArrayList<Producto> productos = new ArrayList<>();
+        
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                Producto prod = new Producto(rs.getInt("idproductos"), rs.getString("codigo"), rs.getString("nombre"), rs.getString("descripcion"), rs.getDouble("peso"), rs.getInt("idmarca"), rs.getInt("cantidad"));
+                productos.add(prod);
+            }
+            return productos;
+            
+            
+        }catch(SQLException e){
+            System.out.println(e);
+            return productos;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean insertar(Producto pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -78,7 +137,7 @@ public class ConsultasProducto extends Conexion{
         PreparedStatement ps;
         Connection con = getConnection();
         
-        String sql = "UPDATE producto SET codigo=?, nombre=?, descripcion=?, peso=?, idmarca=?, cantidad=? WHERE idproductos=?";
+        String sql = "UPDATE activo SET codigo=?, nombre=?, descripcion=?, peso=?, idmarca=?, cantidad=? WHERE idproductos=?";
         
         try{
             ps = con.prepareStatement(sql);
@@ -106,7 +165,36 @@ public class ConsultasProducto extends Conexion{
             }
         }
     }
-    
+    public String[] buscarElemento(String codigo){
+        String[] resultados = new String[7];
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection conn = getConnection();   
+        try{       
+            ps = conn.prepareStatement("SELECT idproductos, codigo, nombre, descripcion, peso, idmarca, cantidad FROM activo WHERE codigo=?");
+            ps.setString(1, codigo);
+            rs= ps.executeQuery();
+            if (rs.next()) {
+                resultados[0]=rs.getInt("idproductos")+"";
+                resultados[1]=rs.getString("codigo")+"";
+                resultados[2]=rs.getString("nombre")+"";
+                resultados[3]=rs.getString("descripcion")+"";
+                resultados[4]=rs.getDouble("peso")+"";
+                resultados[5]=rs.getInt("idmarca")+"";
+                resultados[6]=rs.getInt("cantidad")+"";
+            }
+            return resultados;
+        }catch(SQLException e){
+            System.out.println(e);
+            return resultados;
+        }finally{
+            try{
+                conn.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean buscar(Producto pro){
         PreparedStatement ps;
         ResultSet rs;
