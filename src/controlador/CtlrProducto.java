@@ -7,9 +7,6 @@ package controlador;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -23,11 +20,11 @@ import vista.FrmActivos;
  * @author Administrator
  */
 public final class CtlrProducto implements ActionListener {
-    private Producto producto;
-    private ConsultasProducto cproducto ;
-    private FrmActivos vproducto ;
-    private DefaultTableModel modelo;
-    private DefaultComboBoxModel cbxmodelo;
+    private final Producto producto;
+    private final ConsultasProducto cproducto ;
+    private final FrmActivos vproducto ;
+    private final DefaultTableModel modelo;
+    private final DefaultComboBoxModel cbxmodelo;
     
     public CtlrProducto(Producto producto, ConsultasProducto cproducto, FrmActivos vproducto) {
         this.producto = producto;
@@ -48,16 +45,17 @@ public final class CtlrProducto implements ActionListener {
             public void mouseClicked(java.awt.event.MouseEvent evt){
                 getSelectedProducto();
             }
-        });
-        this.vproducto.jtbActivos.setModel(modelo);
-        this.vproducto.cbxMarca.setModel(cbxmodelo);
-        this.vproducto.btnEliminar.addActionListener(this);
+        });        this.vproducto.btnEliminar.addActionListener(this);
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
         this.vproducto.btnModificar.addActionListener(this);
+        this.vproducto.jtbActivos.setModel(modelo);
+        this.vproducto.cbxMarca.setModel(cbxmodelo);
+
     }
     
     public void llenarTabla(){
+        limpiarTabla();
         ArrayList<Producto> productos = cproducto.getProductos();
         for (int i = 0; i < modelo.getRowCount(); i++) {
             modelo.removeRow(i);
@@ -71,6 +69,11 @@ public final class CtlrProducto implements ActionListener {
             array[4] = productos.get(i).getMarca();
             array[5] = productos.get(i).getStock();
             modelo.addRow(array);
+        }
+    }
+    public void limpiarTabla(){
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            modelo.removeRow(i);
         }
     }
     
@@ -139,7 +142,7 @@ public final class CtlrProducto implements ActionListener {
                         producto.setCodigo(vproducto.txtCodigoActivos.getText());
                         producto.setNombre(vproducto.txtNombre.getText());
                         producto.setDescripcion(vproducto.txtDescripcion.getText());
-                        producto.setPeso(Double.parseDouble(vproducto.txtPeso.getTex));
+                        producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
                         producto.setMarca(Integer.parseInt(String.valueOf(vproducto.cbxMarca.getSelectedItem())));
                         producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                         
