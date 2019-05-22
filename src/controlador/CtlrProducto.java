@@ -45,7 +45,8 @@ public final class CtlrProducto implements ActionListener {
             public void mouseClicked(java.awt.event.MouseEvent evt){
                 getSelectedProducto();
             }
-        });        this.vproducto.btnEliminar.addActionListener(this);
+        });        
+        this.vproducto.btnEliminar.addActionListener(this);
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
         this.vproducto.btnModificar.addActionListener(this);
@@ -57,9 +58,6 @@ public final class CtlrProducto implements ActionListener {
     public void llenarTabla(){
         limpiarTabla();
         ArrayList<Producto> productos = cproducto.getProductos();
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            modelo.removeRow(i);
-        }
         Object[] array = new Object[6];
         for (int i = 0; i < productos.size(); i++) {
             array[0] = productos.get(i).getCodigo();

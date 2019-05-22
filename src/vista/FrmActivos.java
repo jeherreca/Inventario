@@ -46,24 +46,24 @@ public class FrmActivos extends javax.swing.JFrame {
         jPanel8 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
+        jtbMarca = new javax.swing.JTable();
         jLabel13 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
+        jtbMarcaProducto = new javax.swing.JTable();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jLabel16 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
+        btnModificarMarca = new javax.swing.JButton();
+        btnInsertarMarca = new javax.swing.JButton();
+        btnEliminarMarca = new javax.swing.JButton();
+        lblPesoMarca = new javax.swing.JLabel();
+        lblCantidadMarca = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtIDMarca = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtNombreMarca = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtObservaciones = new javax.swing.JTextArea();
         jplActivos = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jtbActivos = new javax.swing.JTable();
@@ -250,7 +250,7 @@ public class FrmActivos extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Salidas", jPanel8);
 
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
+        jtbMarca.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null},
                 {null, null},
@@ -261,46 +261,46 @@ public class FrmActivos extends javax.swing.JFrame {
                 "Title 1", "Title 2"
             }
         ));
-        jScrollPane4.setViewportView(jTable5);
+        jScrollPane4.setViewportView(jtbMarca);
 
         jLabel13.setText("Productos por marca:");
 
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
+        jtbMarcaProducto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3"
+                "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane6.setViewportView(jTable6);
+        jScrollPane6.setViewportView(jtbMarcaProducto);
 
         jLabel14.setText("Peso por marca:");
 
         jLabel15.setText("Cantidad por marca:");
 
-        jButton8.setText("Modificar");
+        btnModificarMarca.setText("Modificar");
 
-        jButton9.setText("Insertar");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
+        btnInsertarMarca.setText("Insertar");
+        btnInsertarMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                btnInsertarMarcaActionPerformed(evt);
             }
         });
 
-        jButton10.setText("Eliminar");
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        btnEliminarMarca.setText("Eliminar");
+        btnEliminarMarca.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton10ActionPerformed(evt);
+                btnEliminarMarcaActionPerformed(evt);
             }
         });
 
-        jLabel16.setText("#");
+        lblPesoMarca.setText("#");
 
-        jLabel17.setText("#");
+        lblCantidadMarca.setText("#");
 
         jLabel8.setText("ID:");
 
@@ -308,9 +308,9 @@ public class FrmActivos extends javax.swing.JFrame {
 
         jLabel10.setText("Observaciones:");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        txtObservaciones.setColumns(20);
+        txtObservaciones.setRows(5);
+        jScrollPane3.setViewportView(txtObservaciones);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -322,11 +322,11 @@ public class FrmActivos extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField2)
+                            .addComponent(txtNombreMarca)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel9)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtIDMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel10))
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
@@ -335,11 +335,11 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                        .addComponent(jButton8)
+                        .addComponent(btnModificarMarca)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton9)
+                        .addComponent(btnInsertarMarca)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton10)))
+                        .addComponent(btnEliminarMarca)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -349,8 +349,8 @@ public class FrmActivos extends javax.swing.JFrame {
                                 .addComponent(jLabel15))
                             .addGap(14, 14, 14)
                             .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel17)
-                                .addComponent(jLabel16))
+                                .addComponent(lblCantidadMarca)
+                                .addComponent(lblPesoMarca))
                             .addGap(54, 54, 54))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -369,18 +369,18 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addGap(18, 20, Short.MAX_VALUE)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel14)
-                            .addComponent(jLabel16)))
+                            .addComponent(lblPesoMarca)))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtIDMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel9)
                                 .addGap(5, 5, 5)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtNombreMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jLabel10)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -390,10 +390,10 @@ public class FrmActivos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15)
-                    .addComponent(jLabel17)
-                    .addComponent(jButton10)
-                    .addComponent(jButton9)
-                    .addComponent(jButton8))
+                    .addComponent(lblCantidadMarca)
+                    .addComponent(btnEliminarMarca)
+                    .addComponent(btnInsertarMarca)
+                    .addComponent(btnModificarMarca))
                 .addGap(10, 10, 10))
         );
 
@@ -487,8 +487,8 @@ public class FrmActivos extends javax.swing.JFrame {
                                 .addGroup(jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jplActivosLayout.createSequentialGroup()
                                         .addComponent(txtCodigoActivos, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(32, 32, 32)
-                                        .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                     .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)))
                             .addGroup(jplActivosLayout.createSequentialGroup()
                                 .addGroup(jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -569,9 +569,9 @@ public class FrmActivos extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+    private void btnInsertarMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarMarcaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+    }//GEN-LAST:event_btnInsertarMarcaActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
@@ -585,9 +585,9 @@ public class FrmActivos extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreActionPerformed
 
-    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+    private void btnEliminarMarcaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarMarcaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton10ActionPerformed
+    }//GEN-LAST:event_btnEliminarMarcaActionPerformed
 
     private void txtCantidadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadActionPerformed
         // TODO add your handling code here:
@@ -600,19 +600,17 @@ public class FrmActivos extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnBuscar;
     public javax.swing.JButton btnEliminar;
+    public javax.swing.JButton btnEliminarMarca;
     public javax.swing.JButton btnInsertar;
+    public javax.swing.JButton btnInsertarMarca;
     public javax.swing.JButton btnModificar;
+    public javax.swing.JButton btnModificarMarca;
     public javax.swing.JComboBox<String> cbxMarca;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -638,24 +636,26 @@ public class FrmActivos extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    public javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable10;
-    private javax.swing.JTable jTable5;
-    private javax.swing.JTable jTable6;
-    private javax.swing.JTable jTable7;
-    private javax.swing.JTable jTable8;
-    private javax.swing.JTable jTable9;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    public javax.swing.JTable jTable10;
+    public javax.swing.JTable jTable7;
+    public javax.swing.JTable jTable8;
+    public javax.swing.JTable jTable9;
     private javax.swing.JPanel jplActivos;
     public javax.swing.JTable jtbActivos;
+    public javax.swing.JTable jtbMarca;
+    public javax.swing.JTable jtbMarcaProducto;
+    public javax.swing.JLabel lblCantidadMarca;
+    public javax.swing.JLabel lblPesoMarca;
     public javax.swing.JTextField txtCantidad;
     public javax.swing.JTextField txtCodigoActivos;
     public javax.swing.JTextArea txtDescripcion;
     public javax.swing.JTextField txtIDActivo;
+    public javax.swing.JTextField txtIDMarca;
     public javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtNombreMarca;
+    public javax.swing.JTextArea txtObservaciones;
     public javax.swing.JTextField txtPeso;
     // End of variables declaration//GEN-END:variables
 }

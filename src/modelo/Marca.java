@@ -14,6 +14,15 @@ public class Marca {
     public String nombre;
     public String observaciones;
 
+    public Marca(int id, String nombre, String observaciones) {
+        this.id = id;
+        this.nombre = nombre;
+        this.observaciones = observaciones;
+    }
+    
+    public Marca(){
+        
+    }
     public int getId() {
         return id;
     }

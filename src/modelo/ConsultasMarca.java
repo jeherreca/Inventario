@@ -162,5 +162,34 @@ public class ConsultasMarca extends Conexion {
             }
         }
     }
-    
+    public ArrayList<Marca> getMarcas(){
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection con = getConnection();
+        
+        String sql = "SELECT * FROM marca";
+        ArrayList<Marca> marcas = new ArrayList<>();
+        
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                Marca marca = new Marca(rs.getInt("idmarca"), rs.getString("nombre"), rs.getString("observaciones"));
+                marcas.add(marca);
+            }
+            return marcas;
+            
+            
+        }catch(SQLException e){
+            System.out.println(e);
+            return marcas;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
 }
