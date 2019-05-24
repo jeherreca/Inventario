@@ -15,7 +15,10 @@ public class Producto {
     private String codigo;
     private String nombre;
     private String descripcion;
-
+    private Double peso;
+    private int marca;
+    private int stock;
+    
     public Producto(int id, String codigo, String nombre, String descripcion, Double peso, int marca, int stock) {
         this.id = id;
         this.codigo = codigo;
@@ -29,9 +32,7 @@ public class Producto {
     public Producto (){
         
     }
-    private Double peso;
-    private int marca;
-    private int stock;
+
 
     public int getId() {
         return id;

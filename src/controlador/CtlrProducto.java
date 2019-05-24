@@ -58,6 +58,7 @@ public final class CtlrProducto implements ActionListener {
     public void llenarTabla(){
         limpiarTabla();
         ArrayList<Producto> productos = cproducto.getProductos();
+        System.out.println("STOP");
         Object[] array = new Object[6];
         for (int i = 0; i < productos.size(); i++) {
             array[0] = productos.get(i).getCodigo();

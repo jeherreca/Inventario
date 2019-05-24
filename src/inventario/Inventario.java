@@ -7,10 +7,13 @@ package inventario;
 
 import controlador.CtlrMarca;
 import controlador.CtlrProducto;
+import controlador.CtlrProveedor;
 import modelo.ConsultasMarca;
 import modelo.ConsultasProducto;
+import modelo.ConsultasProveedor;
 import modelo.Marca;
 import modelo.Producto;
+import modelo.Proveedor;
 import vista.FrmActivos;
 
 /**
@@ -27,8 +30,13 @@ public class Inventario {
         Marca marca = new Marca();
         ConsultasMarca cmarca = new ConsultasMarca();
         
+        Proveedor proveedor = new Proveedor();
+        ConsultasProveedor cproveedor = new ConsultasProveedor();
+        
         CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto);
         CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto);
+        CtlrProveedor ctlrprov = new CtlrProveedor(proveedor, cproveedor, vproducto);
+        
         vproducto.setVisible(true);
     }
 }

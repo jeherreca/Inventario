@@ -99,7 +99,32 @@ public class ConsultasMarca extends Conexion {
             }
         }
     }
-    
+    public String[] buscarElemento(String id){
+        String[] resultados = new String[3];
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection conn = getConnection();   
+        try{       
+            ps = conn.prepareStatement("SELECT idmarca, nombre, observaciones FROM marca WHERE idmarca=?");
+            ps.setString(1, id);
+            rs= ps.executeQuery();
+            if (rs.next()) {
+                resultados[0]=rs.getInt("idmarca")+"";
+                resultados[1]=rs.getString("nombre")+"";
+                resultados[2]=rs.getString("observaciones")+"";
+            }
+            return resultados;
+        }catch(SQLException e){
+            System.out.println(e);
+            return resultados;
+        }finally{
+            try{
+                conn.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean buscar (Marca marca){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -137,7 +162,7 @@ public class ConsultasMarca extends Conexion {
         PreparedStatement ps;
         Connection con=getConnection();
         ArrayList<Producto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM producto WHERE idmarca=?";
+        String sql = "SELECT * FROM activo WHERE idmarca=?";
         ResultSet rs;
         
         try{
