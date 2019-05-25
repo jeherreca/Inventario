@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.Producto;
 import modelo.Proveedor;
 import vista.FrmActivos;
 
@@ -20,7 +19,7 @@ import vista.FrmActivos;
  * @author Administrator
  */
 public final class CtlrProveedor implements ActionListener{
-    
+
     private final Proveedor proveedor;
     private final ConsultasProveedor cproveedor;
     private final FrmActivos vproveedor;
@@ -50,7 +49,7 @@ public final class CtlrProveedor implements ActionListener{
         this.vproveedor.btnModificarProveedor.addActionListener(this);
         this.vproveedor.jtbProveedores.setModel(modelo);
     }
- public void llenarTabla(){
+    public void llenarTabla(){
         limpiarTabla();
         ArrayList<Proveedor> proveedores = cproveedor.getProveedores();
         Object[] array = new Object[6];
@@ -69,7 +68,7 @@ public final class CtlrProveedor implements ActionListener{
             modelo.removeRow(i);
         }
     }
-    
+
     public void getSelectedProveedor(){
         int fila = vproveedor.jtbProveedores.getSelectedRow();
         System.out.println(fila);
@@ -125,10 +124,9 @@ public final class CtlrProveedor implements ActionListener{
                         JOptionPane.showMessageDialog(null, "Error al insertar proveedor");
                         limpiar ();
                         llenarTabla();
-                    }
-                    
+                    }    
                 }else{
-                    if (e.getSource() == vproveedor.btnModificar) {
+                    if (e.getSource() == vproveedor.btnModificarProveedor) {
                         proveedor.setId(Integer.parseInt(vproveedor.txtIDProveedor.getText()));
                         proveedor.setNombre(vproveedor.txtNombreProveedor.getText());
                         proveedor.setTelefono(vproveedor.txtContacto.getText());
@@ -147,11 +145,10 @@ public final class CtlrProveedor implements ActionListener{
                         }
                     }
                 }
-            }
-            
+            }            
         }
     }
-    
+
     public void limpiar(){
         vproveedor.txtIDProveedor.setText("");
         vproveedor.txtNombreProveedor.setText("");
@@ -159,8 +156,5 @@ public final class CtlrProveedor implements ActionListener{
         vproveedor.txtDireccion.setText("");
         vproveedor.txtCiudad.setText("");
         vproveedor.txtIdentificacion.setText("");
-    }
-    
-    
-    
+    } 
 }
