@@ -18,6 +18,18 @@ public class Compra {
     private Double precio;
     private String codigo;
 
+    public Compra(int id, int proveedor, Date fecha, Double precio, String codigo) {
+        this.id = id;
+        this.proveedor = proveedor;
+        this.fecha = fecha;
+        this.precio = precio;
+        this.codigo = codigo;
+    }
+    
+   public Compra(){
+       
+   }
+   
     public int getId() {
         return id;
     }

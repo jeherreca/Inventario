@@ -71,8 +71,9 @@ public final class CtlrProducto implements ActionListener {
         }
     }
     public void limpiarTabla(){
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            modelo.removeRow(i);
+        int size = modelo.getRowCount();
+        for (int i = 0; i < size; i++) {
+            modelo.removeRow(size - 1 - i);
         }
     }
     
