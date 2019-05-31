@@ -15,30 +15,29 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class ConsultasProveedor extends Conexion {
+public class ConsultasUbicacion extends Conexion {
     
-    public ArrayList<Proveedor> getProveedores(){
+    public ArrayList<UbicacionProducto> buscarProductos(Ubicacion ubi){
         PreparedStatement ps;
+        Connection con=getConnection();
+        ArrayList<UbicacionProducto> productos = new ArrayList<>();
+        String sql = "SELECT * FROM ubicacion_productos WHERE idubicacion=?";
         ResultSet rs;
-        Connection con = getConnection();
-        
-        String sql = "SELECT * FROM proveedores";
-        ArrayList<Proveedor> proveedores = new ArrayList<>();
         
         try{
             ps = con.prepareStatement(sql);
+            ps.setInt(1, ubi.getId());
+            
             rs = ps.executeQuery();
             
             while(rs.next()){
-                Proveedor proveedor = new Proveedor(rs.getInt("idproveedores"), rs.getString("nombre"), rs.getString("contacto"), rs.getString("direccion"), rs.getString("ciudad"), rs.getString("identificacion"));
-                proveedores.add(proveedor);
+                UbicacionProducto pro  = new UbicacionProducto(rs.getInt("idubicacion"), rs.getInt("idproductos"), rs.getInt("cantidad"));
+                productos.add(pro);
             }
-            return proveedores;
-            
-            
+            return productos;
         }catch(SQLException e){
             System.out.println(e);
-            return proveedores;
+            return productos;
         }finally{
             try{
                 con.close();
@@ -47,19 +46,49 @@ public class ConsultasProveedor extends Conexion {
             }
         }
     }
-    public boolean insertar(Proveedor proveedores){
+    public ArrayList<Ubicacion> getUbicacion(){
         PreparedStatement ps;
+        ResultSet rs;
         Connection con = getConnection();
         
-        String sql = "INSERT INTO proveedores (nombre, contacto, direccion, ciudad, identificacion) VALUES (?,?,?,?,?)";
+        String sql = "SELECT * FROM ubicaciones";
+        ArrayList<Ubicacion> ubicaciones = new ArrayList<>();
         
         try{
             ps = con.prepareStatement(sql);
-            ps.setString(1, proveedores.getNombre());
-            ps.setString(2, proveedores.getTelefono());
-            ps.setString(3, proveedores.getDireccion());
-            ps.setString(4, proveedores.getCiudad());
-            ps.setString(5, proveedores.getIdentificacion());
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                Ubicacion ubicacion = new Ubicacion(rs.getInt("idubicaciones"), rs.getString("nombre"), rs.getString("contacto"), rs.getString("direccion"), rs.getString("ciudad"), rs.getString("identificacion"));
+                ubicaciones.add(ubicacion);
+            }
+            return ubicaciones;
+            
+            
+        }catch(SQLException e){
+            System.out.println(e);
+            return ubicaciones;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
+    public boolean insertar(Ubicacion ubicaciones){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        
+        String sql = "INSERT INTO ubicaciones (nombre, contacto, direccion, ciudad, identificacion) VALUES (?,?,?,?,?)";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setString(1, ubicaciones.getNombre());
+            ps.setString(2, ubicaciones.getTelefono());
+            ps.setString(3, ubicaciones.getDireccion());
+            ps.setString(4, ubicaciones.getCiudad());
+            ps.setString(5, ubicaciones.getIdentificacion());
             
             ps.execute();
             
@@ -78,11 +107,11 @@ public class ConsultasProveedor extends Conexion {
             
         }
     }
-    public boolean eliminar(Proveedor pro){
+    public boolean eliminar(Ubicacion pro){
         PreparedStatement ps;
         Connection con = getConnection();
         
-        String sql = "DELETE FROM proveedores WHERE idproveedores=?";
+        String sql = "DELETE FROM ubicaciones WHERE idubicaciones=?";
         
         try{
             ps = con.prepareStatement(sql);
@@ -104,11 +133,11 @@ public class ConsultasProveedor extends Conexion {
             }  
         }
     }
-    public boolean modificar(Proveedor pro){
+    public boolean modificar(Ubicacion pro){
         PreparedStatement ps;
         Connection con = getConnection();
         
-        String sql = "UPDATE proveedores SET nombre=?, contacto=?, direccion=?, ciudad=?, identificacion=? WHERE idproveedores=?";
+        String sql = "UPDATE ubicaciones SET nombre=?, contacto=?, direccion=?, ciudad=?, identificacion=? WHERE idubicaciones=?";
         
         try{
             ps = con.prepareStatement(sql);
@@ -141,11 +170,11 @@ public class ConsultasProveedor extends Conexion {
         ResultSet rs;
         Connection conn = getConnection();   
         try{       
-            ps = conn.prepareStatement("SELECT idproveedores, nombre, contacto, direccion, ciudad, identificacion FROM proveedores WHERE idproveedores=?");
+            ps = conn.prepareStatement("SELECT idubicaciones, nombre, contacto, direccion, ciudad, identificacion FROM ubicaciones WHERE idubicaciones=?");
             ps.setString(1, id);
             rs= ps.executeQuery();
             if (rs.next()) {
-                resultados[0]=rs.getInt("idproveedores")+"";
+                resultados[0]=rs.getInt("idubicaciones")+"";
                 resultados[1]=rs.getString("nombre")+"";
                 resultados[2]=rs.getString("contacto")+"";
                 resultados[3]=rs.getString("direccion")+"";
@@ -164,12 +193,12 @@ public class ConsultasProveedor extends Conexion {
             }
         }
     }
-    public boolean buscar(Proveedor pro){
+    public boolean buscar(Ubicacion pro){
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
         
-        String sql = "SELECT * FROM proveedores WHERE idproveedores=?";
+        String sql = "SELECT * FROM ubicaciones WHERE idubicaciones=?";
         
         try{
             ps = con.prepareStatement(sql);
@@ -177,7 +206,7 @@ public class ConsultasProveedor extends Conexion {
             
             rs= ps.executeQuery();
             if(rs.next()){
-                pro.setId(rs.getInt("idproveedores"));
+                pro.setId(rs.getInt("idubicaciones"));
                 pro.setNombre(rs.getString("nombre"));
                 pro.setTelefono(rs.getString("contacto"));
                 pro.setDireccion(rs.getString("direccion"));

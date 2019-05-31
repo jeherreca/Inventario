@@ -6,26 +6,29 @@
 package controlador;
 
 import java.awt.event.ActionEvent;
-import modelo.ConsultasProveedor;
+import modelo.ConsultasUbicacion;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.Proveedor;
+import modelo.Producto;
+import modelo.Ubicacion;
+import modelo.UbicacionProducto;
 import vista.FrmActivos;
 
 /**
  *
  * @author Administrator
  */
-public final class CtlrProveedor implements ActionListener{
+public final class CtlrUbicacion implements ActionListener{
 
-    private final Proveedor proveedor;
-    private final ConsultasProveedor cproveedor;
+    private final Ubicacion proveedor;
+    private final ConsultasUbicacion cproveedor;
     private final FrmActivos vproveedor;
     private final DefaultTableModel modelo;
-
-    public CtlrProveedor(Proveedor proveedor, ConsultasProveedor cproveedor, FrmActivos vproveedor) {
+    private final DefaultTableModel modeloc;
+    
+    public CtlrUbicacion(Ubicacion proveedor, ConsultasUbicacion cproveedor, FrmActivos vproveedor) {
         this.proveedor = proveedor;
         this.cproveedor = cproveedor;
         this.vproveedor = vproveedor;
@@ -36,11 +39,15 @@ public final class CtlrProveedor implements ActionListener{
         this.modelo.addColumn("Dirección");
         this.modelo.addColumn("Ciudad");
         this.modelo.addColumn("Identificación");
+        this.modeloc = new DefaultTableModel();
+        this.modeloc.addColumn("ID");
+        this.modeloc.addColumn("Cantidad");
         llenarTabla();
         this.vproveedor.jtbProveedores.addMouseListener(new java.awt.event.MouseAdapter(){
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt){
                 getSelectedProveedor();
+                llenarTablaProductos();
             }
         });
         this.vproveedor.btnBuscarProveedor.addActionListener(this);
@@ -48,10 +55,21 @@ public final class CtlrProveedor implements ActionListener{
         this.vproveedor.btnEliminarProveedor.addActionListener(this);
         this.vproveedor.btnModificarProveedor.addActionListener(this);
         this.vproveedor.jtbProveedores.setModel(modelo);
+        this.vproveedor.jtbUbicacionProducto.setModel(modeloc);
+    }
+    public void llenarTablaProductos(){
+        limpiarTablaProductos();
+        ArrayList<UbicacionProducto> productos = cproveedor.buscarProductos(proveedor);
+        Object[] array= new Object[2];
+        for (int i = 0; i < productos.size(); i++) {
+            array[0] = productos.get(i).getIdproducto();
+            array[1] = productos.get(i).getCantidad();
+            modeloc.addRow(array);
+        }
     }
     public void llenarTabla(){
         limpiarTabla();
-        ArrayList<Proveedor> proveedores = cproveedor.getProveedores();
+        ArrayList<Ubicacion> proveedores = cproveedor.getUbicacion();
         Object[] array = new Object[6];
         for (int i = 0; i < proveedores.size(); i++) {
             array[0] = proveedores.get(i).getId();
@@ -63,9 +81,16 @@ public final class CtlrProveedor implements ActionListener{
             modelo.addRow(array);
         }
     }
+    public void limpiarTablaProductos(){
+        int size = modeloc.getRowCount();
+        for (int i = 0; i < size; i++) {
+            modeloc.removeRow(size - 1 - i);
+        }
+    }
     public void limpiarTabla(){
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            modelo.removeRow(i);
+        int size = modelo.getRowCount();
+        for (int i = 0; i < size; i++) {
+            modelo.removeRow(size - 1 - i);
         }
     }
 
@@ -74,6 +99,7 @@ public final class CtlrProveedor implements ActionListener{
         System.out.println(fila);
         String codigo = vproveedor.jtbProveedores.getValueAt(fila,0).toString();
         String[] rs = cproveedor.buscarElemento(codigo);
+            proveedor.setId(Integer.parseInt(rs[0]));
             vproveedor.txtIDProveedor.setText(rs[0]);
             vproveedor.txtNombreProveedor.setText(rs[1]);
             vproveedor.txtContacto.setText(rs[2]);
@@ -96,7 +122,6 @@ public final class CtlrProveedor implements ActionListener{
                 JOptionPane.showMessageDialog(null, "No se encontro registro");
                 limpiar();
             }
-            
         }else{
             if(e.getSource() == vproveedor.btnEliminarProveedor){
                 proveedor.setId(Integer.parseInt(vproveedor.txtIDProveedor.getText()));

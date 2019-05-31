@@ -5,38 +5,55 @@
  */
 package inventario;
 
+import controlador.CtlrBodega;
 import controlador.CtlrMarca;
+import controlador.CtlrMovimiento;
 import controlador.CtlrProducto;
-import controlador.CtlrProveedor;
+import controlador.CtlrUbicacion;
+import modelo.Bodega;
+import modelo.ConsultasBodega;
 import modelo.ConsultasMarca;
+import modelo.ConsultasMovimiento;
 import modelo.ConsultasProducto;
-import modelo.ConsultasProveedor;
+import modelo.ConsultasUbicacion;
 import modelo.Marca;
+import modelo.Movimiento;
 import modelo.Producto;
-import modelo.Proveedor;
+import modelo.Ubicacion;
 import vista.FrmActivos;
+import vista.FrmEntrada;
+import vista.FrmSalida;
 
 /**
  *
  * @author Administrator
  */
 public class Inventario {
+    
     public static void main(String[] args) {
         
         Producto producto = new Producto();
         ConsultasProducto cproducto = new ConsultasProducto();
         FrmActivos vproducto = new FrmActivos();
+        FrmEntrada ventrada = new FrmEntrada();
+        FrmSalida vsalida = new FrmSalida();
         
         Marca marca = new Marca();
         ConsultasMarca cmarca = new ConsultasMarca();
         
-        Proveedor proveedor = new Proveedor();
-        ConsultasProveedor cproveedor = new ConsultasProveedor();
+        Ubicacion ubicacion = new Ubicacion();
+        ConsultasUbicacion cubicacion= new ConsultasUbicacion();
+        
+        ConsultasBodega conBodega = new ConsultasBodega();
+        CtlrBodega cbodega = new CtlrBodega(conBodega, vproducto);
+        
+        Movimiento mov = new Movimiento();
+        ConsultasMovimiento cmov = new ConsultasMovimiento();
         
         CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto);
-        CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto);
-        CtlrProveedor ctlrprov = new CtlrProveedor(proveedor, cproveedor, vproducto);
-        
+        CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto, cbodega);
+        CtlrUbicacion ctlrubic = new CtlrUbicacion(ubicacion, cubicacion, vproducto);
+        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, cmov, vproducto, ventrada, vsalida);
         vproducto.setVisible(true);
     }
 }

@@ -9,7 +9,7 @@ package modelo;
  *
  * @author Administrator
  */
-public class Proveedor {
+public class Ubicacion {
     
     private int id;
     private String nombre;
@@ -18,7 +18,7 @@ public class Proveedor {
     private String ciudad;
     private String identificacion;
 
-    public Proveedor(int id, String nombre, String telefono, String direccion, String ciudad, String identificacion) {
+    public Ubicacion(int id, String nombre, String telefono, String direccion, String ciudad, String identificacion) {
         this.id = id;
         this.nombre = nombre;
         this.telefono = telefono;
@@ -27,7 +27,7 @@ public class Proveedor {
         this.identificacion = identificacion;
     }
 
-    public Proveedor() {
+    public Ubicacion() {
     }
 
     

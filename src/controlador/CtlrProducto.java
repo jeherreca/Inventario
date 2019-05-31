@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import modelo.ConsultasBodega;
 import modelo.ConsultasProducto;
 import modelo.Producto;
 import vista.FrmActivos;
@@ -25,11 +26,13 @@ public final class CtlrProducto implements ActionListener {
     private final FrmActivos vproducto ;
     private final DefaultTableModel modelo;
     private final DefaultComboBoxModel cbxmodelo;
+    private final CtlrBodega cbodega;
     
-    public CtlrProducto(Producto producto, ConsultasProducto cproducto, FrmActivos vproducto) {
+    public CtlrProducto(Producto producto, ConsultasProducto cproducto, FrmActivos vproducto, CtlrBodega cbodega) {
         this.producto = producto;
         this.cproducto = cproducto;
         this.vproducto = vproducto;
+        this.cbodega = cbodega;
         this.modelo = new DefaultTableModel();
         this.cbxmodelo = new DefaultComboBoxModel();
         this.modelo.addColumn("Código");
@@ -52,13 +55,12 @@ public final class CtlrProducto implements ActionListener {
         this.vproducto.btnModificar.addActionListener(this);
         this.vproducto.jtbActivos.setModel(modelo);
         this.vproducto.cbxMarca.setModel(cbxmodelo);
-
+        this.vproducto.txtIDActivo.setVisible(false);
     }
     
     public void llenarTabla(){
         limpiarTabla();
         ArrayList<Producto> productos = cproducto.getProductos();
-        System.out.println("STOP");
         Object[] array = new Object[6];
         for (int i = 0; i < productos.size(); i++) {
             array[0] = productos.get(i).getCodigo();
@@ -79,7 +81,6 @@ public final class CtlrProducto implements ActionListener {
     
     public void getSelectedProducto(){
         int fila = vproducto.jtbActivos.getSelectedRow();
-        System.out.println(fila);
         String codigo = vproducto.jtbActivos.getValueAt(fila,0).toString();
         String[] rs =cproducto.buscarElemento(codigo);
             vproducto.txtIDActivo.setText(rs[0]);
@@ -127,6 +128,8 @@ public final class CtlrProducto implements ActionListener {
                     producto.setMarca(Integer.parseInt(String.valueOf(vproducto.cbxMarca.getSelectedItem())));
                     producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                     if (cproducto.insertar(producto)) {
+                        cbodega.getCbodega().insertar(producto);
+                        cbodega.llenarTabla();
                         JOptionPane.showMessageDialog(null, "Producto insertado");
                         limpiar();
                         llenarTabla();
@@ -147,6 +150,7 @@ public final class CtlrProducto implements ActionListener {
                         producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                         
                         if (cproducto.modificar(producto)) {
+                            
                             JOptionPane.showMessageDialog(null, "Producto modificado");
                             limpiar();
                             llenarTabla();

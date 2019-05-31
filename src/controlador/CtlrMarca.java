@@ -55,13 +55,15 @@ public final class CtlrMarca implements ActionListener{
         this.vmarca.jtbMarcaProducto.setModel(modelomp);
     }
     public void limpiarTabla(){
-        for (int i = 0; i < modelomarca.getRowCount(); i++) {
-            modelomarca.removeRow(i);
+        int size = modelomarca.getRowCount();
+        for (int i = 0; i < size; i++) {
+            modelomarca.removeRow(size - 1 - i);
         }
     }
     public void limpiarTablaProductos(){
-        for (int i = 0; i < modelomp.getRowCount(); i++) {
-            modelomp.removeRow(i);
+        int size = modelomp.getRowCount();
+        for (int i = 0; i < size; i++) {
+            modelomp.removeRow(size - 1 - i);
         }
     }
     public void llenarTablaProductos(){
@@ -88,7 +90,6 @@ public final class CtlrMarca implements ActionListener{
     }
     public void getSelectedMarca(){
         int fila = vmarca.jtbMarca.getSelectedRow();
-        System.out.println(fila);
         String id = vmarca.jtbMarca.getValueAt(fila,0).toString();
         String[] rs =cmarca.buscarElemento(id);
             marca.setId(Integer.parseInt(rs[0]));
