@@ -46,6 +46,7 @@ public class ConsultasUbicacion extends Conexion {
             }
         }
     }
+    
     public ArrayList<Ubicacion> getUbicacion(){
         PreparedStatement ps;
         ResultSet rs;
@@ -76,6 +77,7 @@ public class ConsultasUbicacion extends Conexion {
             }
         }
     }
+    
     public boolean insertar(Ubicacion ubicaciones){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -107,6 +109,7 @@ public class ConsultasUbicacion extends Conexion {
             
         }
     }
+    
     public boolean eliminar(Ubicacion pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -133,6 +136,7 @@ public class ConsultasUbicacion extends Conexion {
             }  
         }
     }
+    
     public boolean modificar(Ubicacion pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -164,6 +168,7 @@ public class ConsultasUbicacion extends Conexion {
             }
         }
     }
+    
     public String[] buscarElemento(String id){
         String[] resultados = new String[6];
         PreparedStatement ps;
@@ -193,6 +198,7 @@ public class ConsultasUbicacion extends Conexion {
             }
         }
     }
+    
     public boolean buscar(Ubicacion pro){
         PreparedStatement ps;
         ResultSet rs;

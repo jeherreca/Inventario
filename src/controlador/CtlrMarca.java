@@ -23,14 +23,16 @@ public final class CtlrMarca implements ActionListener{
     
     private final Marca marca;
     private final ConsultasMarca cmarca;
+    private final CtlrProducto ctlrproducto;
     private final FrmActivos vmarca;
     private final DefaultTableModel modelomarca;
     private final DefaultTableModel modelomp;
 
-    public CtlrMarca(Marca marca, ConsultasMarca cmarca, FrmActivos vmarca) {
+    public CtlrMarca(Marca marca, ConsultasMarca cmarca, FrmActivos vmarca, CtlrProducto ctlrproducto) {
         this.marca = marca;
         this.cmarca = cmarca;
         this.vmarca = vmarca;
+        this.ctlrproducto = ctlrproducto;
         this.modelomarca = new DefaultTableModel();
         this.modelomp = new DefaultTableModel();
         this.modelomarca.addColumn("ID");
@@ -117,6 +119,7 @@ public final class CtlrMarca implements ActionListener{
                 marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
                 if (cmarca.eliminar(marca)) {
                     JOptionPane.showMessageDialog(null, "Marca eliminada");
+                    ctlrproducto.llenarComboBox();
                     limpiar();
                     llenarTabla();
                 }else{
@@ -126,13 +129,13 @@ public final class CtlrMarca implements ActionListener{
                 }
             }else{
                 if (e.getSource() == vmarca.btnInsertarMarca) {
-                    marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
                     marca.setNombre(vmarca.txtNombreMarca.getText());
                     marca.setObservaciones(vmarca.txtObservaciones.getText());
                     if (cmarca.insertar(marca)) {
                         JOptionPane.showMessageDialog(null, "Marca insertada");
                         limpiar();
                         llenarTabla();
+                        ctlrproducto.llenarComboBox();
                     }else{
                         JOptionPane.showMessageDialog(null, "Error al insertar marca");
                         limpiar ();
@@ -142,7 +145,7 @@ public final class CtlrMarca implements ActionListener{
                 }else{
                     if (e.getSource() == vmarca.btnModificarMarca) {
                         marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
-                        marca.setNombre(vmarca.txtNombre.getText());
+                        marca.setNombre(vmarca.txtNombreMarca.getText());
                         marca.setObservaciones(vmarca.txtObservaciones.getText());
                         
                         if (cmarca.modificar(marca)) {

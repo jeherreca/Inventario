@@ -5,6 +5,8 @@
  */
 package controlador;
 
+import inventario.ListHelper;
+import inventario.ListHelperProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasMovimiento;
 import modelo.Movimiento;
+import modelo.MovimientoProducto;
 import vista.FrmActivos;
 import vista.FrmEntrada;
 import vista.FrmSalida;
@@ -22,6 +25,8 @@ import vista.FrmSalida;
  */
 public class CtlrMovimiento implements ActionListener{
     private final Movimiento movimiento;
+    private final MovimientoProducto movprod;
+    private final ArrayList<MovimientoProducto> productos;
     private final ConsultasMovimiento cmovimiento;
     private final FrmActivos vmovimiento;
     private final FrmEntrada ventrada;
@@ -36,8 +41,10 @@ public class CtlrMovimiento implements ActionListener{
     private final DefaultTableModel modelotbpen;
     private final DefaultTableModel modelotbpsa;
     
-    public CtlrMovimiento(Movimiento movimiento, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida) {
+    public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida) {
         this.movimiento = movimiento;
+        this.movprod = movprod;
+        this.productos = new ArrayList<>();
         this.cmovimiento = cmovimiento;
         this.vmovimiento = vmovimiento;
         this.ventrada = ventrada;
@@ -63,6 +70,18 @@ public class CtlrMovimiento implements ActionListener{
         this.modelotbpen.addColumn("Cantidad");
         this.modelotbpsa.addColumn("ID");
         this.modelotbpsa.addColumn("Cantidad");
+        this.vsalida.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt){
+                agregarCliente();
+            }
+        });
+        this.vsalida.lstP1Salida.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt){
+                agregarProductoLista();
+            }
+        });
         this.vmovimiento.btnSalida.addActionListener(this);
         this.vmovimiento.btnEntrada.addActionListener(this);
         this.ventrada.btnAceptarEntrada.addActionListener(this);
@@ -81,14 +100,34 @@ public class CtlrMovimiento implements ActionListener{
         this.vmovimiento.jtbSalida.setModel(modelotbsa);
         this.vmovimiento.jtbProSalidas.setModel(modelotbpsa);
     }
+    
+    public void agregarProductoLista(){
+        int index = vsalida.lstP1Salida.getSelectedIndex();
+        ListHelperProducto cliente = (ListHelperProducto) modelol1s.getElementAt(index);
+        movprod.setActivo(cliente.getId());
+    }
+    
+    public void agregarCliente(){
+        int index = vsalida.lstCliente.getSelectedIndex();
+        ListHelper cliente = (ListHelper) modelocliente.getElementAt(index);
+        
+        movimiento.setUbicacion(cliente.getId());
+        System.out.println(cliente.getId());
+        
+    }
     public void llenarListaBodega(){
-        ArrayList<String> bodega = cmovimiento.getBodega();
+        modelol1s.removeAllElements();
+        ArrayList<ListHelperProducto> bodega = cmovimiento.getBodega();
         for (int i = 0; i < bodega.size(); i++) {
             modelol1s.addElement(bodega.get(i));
         }
     }
+    public void llenarListaSalida(){
+        
+    }
     public void llenarListaClientes(){
-        ArrayList<String> clientes = cmovimiento.getClientes();
+        modelocliente.removeAllElements();
+        ArrayList<ListHelper> clientes = cmovimiento.getClientes();
         for (int i = 0; i < clientes.size(); i++) {
             modelocliente.addElement(clientes.get(i));
         }
@@ -104,6 +143,14 @@ public class CtlrMovimiento implements ActionListener{
             if (e.getSource() == vmovimiento.btnEntrada) {
                 ventrada.setVisible(true);
                 
+            }else{
+                if (e.getSource() == vsalida.btnSumarSalida) {
+                    movprod.setCantidad(Integer.parseInt(vsalida.txtCantidadSalida.getText()));
+                    
+                    productos.add(movprod);
+                    
+                    System.out.println(movprod);
+                }
             }
         }
     }

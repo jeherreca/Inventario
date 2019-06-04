@@ -10,7 +10,6 @@ import controlador.CtlrMarca;
 import controlador.CtlrMovimiento;
 import controlador.CtlrProducto;
 import controlador.CtlrUbicacion;
-import modelo.Bodega;
 import modelo.ConsultasBodega;
 import modelo.ConsultasMarca;
 import modelo.ConsultasMovimiento;
@@ -18,6 +17,7 @@ import modelo.ConsultasProducto;
 import modelo.ConsultasUbicacion;
 import modelo.Marca;
 import modelo.Movimiento;
+import modelo.MovimientoProducto;
 import modelo.Producto;
 import modelo.Ubicacion;
 import vista.FrmActivos;
@@ -48,12 +48,13 @@ public class Inventario {
         CtlrBodega cbodega = new CtlrBodega(conBodega, vproducto);
         
         Movimiento mov = new Movimiento();
+        MovimientoProducto movprod = new MovimientoProducto();
         ConsultasMovimiento cmov = new ConsultasMovimiento();
         
-        CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto);
         CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto, cbodega);
+        CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto, ctlrprod);
         CtlrUbicacion ctlrubic = new CtlrUbicacion(ubicacion, cubicacion, vproducto);
-        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, cmov, vproducto, ventrada, vsalida);
+        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida);
         vproducto.setVisible(true);
     }
 }

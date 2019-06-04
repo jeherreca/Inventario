@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.Producto;
 import modelo.Ubicacion;
 import modelo.UbicacionProducto;
 import vista.FrmActivos;
@@ -126,11 +125,11 @@ public final class CtlrUbicacion implements ActionListener{
             if(e.getSource() == vproveedor.btnEliminarProveedor){
                 proveedor.setId(Integer.parseInt(vproveedor.txtIDProveedor.getText()));
                 if (cproveedor.eliminar(proveedor)) {
-                    JOptionPane.showMessageDialog(null, "Proveedor eliminado");
+                    JOptionPane.showMessageDialog(null, "Cliente eliminado");
                     limpiar();
                     llenarTabla();
                 }else{
-                    JOptionPane.showMessageDialog(null, "Error al eliminar");
+                    JOptionPane.showMessageDialog(null, "Error al eliminar cliente");
                     limpiar();
                     llenarTabla();
                 }
@@ -142,11 +141,11 @@ public final class CtlrUbicacion implements ActionListener{
                     proveedor.setCiudad(vproveedor.txtCiudad.getText());
                     proveedor.setIdentificacion(vproveedor.txtIdentificacion.getText());
                     if (cproveedor.insertar(proveedor)) {
-                        JOptionPane.showMessageDialog(null, "Proveedor insertado");
+                        JOptionPane.showMessageDialog(null, "Cliente insertado");
                         limpiar();
                         llenarTabla();
                     }else{
-                        JOptionPane.showMessageDialog(null, "Error al insertar proveedor");
+                        JOptionPane.showMessageDialog(null, "Error al insertar cliente");
                         limpiar ();
                         llenarTabla();
                     }    
@@ -160,11 +159,11 @@ public final class CtlrUbicacion implements ActionListener{
                         proveedor.setIdentificacion(vproveedor.txtIdentificacion.getText());
                         
                         if (cproveedor.modificar(proveedor)) {
-                            JOptionPane.showMessageDialog(null, "Producto modificado");
+                            JOptionPane.showMessageDialog(null, "Cliente modificado");
                             limpiar();
                             llenarTabla();
                         }else{
-                            JOptionPane.showMessageDialog(null, "Error al modificar producto");
+                            JOptionPane.showMessageDialog(null, "Error al modificar cliente");
                             limpiar();
                             llenarTabla();
                         }

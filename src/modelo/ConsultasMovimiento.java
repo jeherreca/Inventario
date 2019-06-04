@@ -5,6 +5,8 @@
  */
 package modelo;
 
+import inventario.ListHelper;
+import inventario.ListHelperProducto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -44,23 +46,22 @@ public class ConsultasMovimiento extends Conexion{
             }catch(SQLException e){
                 System.out.println(e);
             }
-            
         }
     } 
-    public ArrayList<String> getClientes(){
+    public ArrayList<ListHelper> getClientes(){
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
         
-        String sql = "SELECT nombre FROM ubicaciones";
-        ArrayList<String> clientes = new ArrayList<>();
+        String sql = "SELECT idubicaciones, nombre FROM ubicaciones";
+        ArrayList<ListHelper> clientes = new ArrayList<>();
         
         try{
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             
             while(rs.next()){
-                clientes.add(rs.getString("nombre"));
+                clientes.add(new ListHelper (rs.getInt("idubicaciones"), rs.getString("nombre")));
             }
             
             return clientes;
@@ -76,22 +77,52 @@ public class ConsultasMovimiento extends Conexion{
         }
         
     }
+    public String[] getNombreCodigoProducto(int id) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String[] respuestas = new String[2];
+        String sql = "SELECT codigo, nombre FROM activo WHERE idproductos=?";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            
+            if(rs.next()){
+                respuestas[0] = rs.getString("codigo");
+                respuestas[1] = rs.getString("nombre");
+            }
+            
+            return respuestas;
+        }catch(SQLException e){
+            System.out.println(e);
+            return respuestas;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }          
+    }
     
-    public ArrayList<String> getBodega (){
+    public ArrayList<ListHelperProducto> getBodega (){
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
         
         String sql = "SELECT * FROM bodega";
-        ArrayList<String> bodega = new ArrayList<>();
+        ArrayList<ListHelperProducto> bodega = new ArrayList<>();
         
         try{
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             
             while(rs.next()){
-                
-                bodega.add(rs.getInt("idproducto")+"");
+                String[] respuestas = getNombreCodigoProducto(rs.getInt("idproducto"));
+                bodega.add(new ListHelperProducto(rs.getInt("idproducto"), rs.getInt("stock"), respuestas[1], respuestas[0]));
             }
             
             return bodega;

@@ -5,6 +5,7 @@
  */
 package modelo;
 
+import inventario.ComboBoxHelper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,23 +17,23 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasProducto extends Conexion{
-    public ArrayList<Integer> getMarcas(){
+    
+    public ArrayList<ComboBoxHelper> getMarcas(){
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
         
-        String sql = "SELECT idmarca FROM marca";
-        ArrayList<Integer> marcas = new ArrayList<>();
+        String sql = "SELECT idmarca, nombre FROM marca";
+        ArrayList<ComboBoxHelper> marcas = new ArrayList<>();
         
         try{
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
             
             while(rs.next()){
-                marcas.add(rs.getInt("idmarca"));
+                marcas.add(new ComboBoxHelper(rs.getInt("idmarca"), rs.getString("nombre")));
             }
             return marcas;
-            
             
         }catch(SQLException e){
             System.out.println(e);
@@ -75,6 +76,33 @@ public class ConsultasProducto extends Conexion{
             }
         }
     }
+    public String getNombreMarca (int id){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        String nombre = "";
+        String sql = "SELECT nombre FROM marca WHERE idmarca=?";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            
+            if(rs.next()){
+                nombre = rs.getString("nombre");
+            }
+            return nombre;
+        }catch(SQLException e){
+            System.out.println(e);
+            return nombre;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean insertar(Producto pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -107,6 +135,7 @@ public class ConsultasProducto extends Conexion{
             
         }
     }
+    
     public boolean eliminar(Producto pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -133,6 +162,7 @@ public class ConsultasProducto extends Conexion{
             }  
         }
     }
+    
     public boolean modificar(Producto pro){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -165,6 +195,7 @@ public class ConsultasProducto extends Conexion{
             }
         }
     }
+    
     public String[] buscarElemento(String codigo){
         String[] resultados = new String[7];
         PreparedStatement ps;
@@ -195,6 +226,7 @@ public class ConsultasProducto extends Conexion{
             }
         }
     }
+    
     public boolean buscar(Producto pro){
         PreparedStatement ps;
         ResultSet rs;

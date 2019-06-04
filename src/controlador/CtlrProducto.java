@@ -5,13 +5,13 @@
  */
 package controlador;
 
+import inventario.ComboBoxHelper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import modelo.ConsultasBodega;
 import modelo.ConsultasProducto;
 import modelo.Producto;
 import vista.FrmActivos;
@@ -72,6 +72,7 @@ public final class CtlrProducto implements ActionListener {
             modelo.addRow(array);
         }
     }
+    
     public void limpiarTabla(){
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
@@ -83,13 +84,13 @@ public final class CtlrProducto implements ActionListener {
         int fila = vproducto.jtbActivos.getSelectedRow();
         String codigo = vproducto.jtbActivos.getValueAt(fila,0).toString();
         String[] rs =cproducto.buscarElemento(codigo);
-            vproducto.txtIDActivo.setText(rs[0]);
-            vproducto.txtCodigoActivos.setText(rs[1]);
-            vproducto.txtNombre.setText(rs[2]);
-            vproducto.txtDescripcion.setText(rs[3]);
-            vproducto.txtPeso.setText(rs[4]);
-            vproducto.cbxMarca.setSelectedItem(rs[5]);
-            vproducto.txtCantidad.setText(rs[6]);
+        vproducto.txtIDActivo.setText(rs[0]);
+        vproducto.txtCodigoActivos.setText(rs[1]);
+        vproducto.txtNombre.setText(rs[2]);
+        vproducto.txtDescripcion.setText(rs[3]);
+        vproducto.txtPeso.setText(rs[4]);
+        vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(Integer.parseInt(rs[5]),cproducto.getNombreMarca(Integer.parseInt(rs[5]))));
+        vproducto.txtCantidad.setText(rs[6]);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -101,6 +102,7 @@ public final class CtlrProducto implements ActionListener {
                 vproducto.txtNombre.setText(producto.getNombre());
                 vproducto.txtDescripcion.setText(producto.getDescripcion());
                 vproducto.txtPeso.setText(producto.getPeso()+"");
+                vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(producto.getMarca(),cproducto.getNombreMarca(producto.getMarca())));
                 vproducto.txtCantidad.setText(producto.getStock()+"");
             }else{
                 JOptionPane.showMessageDialog(null, "No se encontro registro");
@@ -125,7 +127,8 @@ public final class CtlrProducto implements ActionListener {
                     producto.setNombre(vproducto.txtNombre.getText());
                     producto.setDescripcion(vproducto.txtDescripcion.getText());
                     producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
-                    producto.setMarca(Integer.parseInt(String.valueOf(vproducto.cbxMarca.getSelectedItem())));
+                    ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
+                    producto.setMarca(marca.getId());
                     producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                     if (cproducto.insertar(producto)) {
                         cbodega.getCbodega().insertar(producto);
@@ -146,11 +149,11 @@ public final class CtlrProducto implements ActionListener {
                         producto.setNombre(vproducto.txtNombre.getText());
                         producto.setDescripcion(vproducto.txtDescripcion.getText());
                         producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
-                        producto.setMarca(Integer.parseInt(String.valueOf(vproducto.cbxMarca.getSelectedItem())));
+                        ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
+                        producto.setMarca(marca.getId());
                         producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
                         
-                        if (cproducto.modificar(producto)) {
-                            
+                        if (cproducto.modificar(producto)) {    
                             JOptionPane.showMessageDialog(null, "Producto modificado");
                             limpiar();
                             llenarTabla();
@@ -175,12 +178,12 @@ public final class CtlrProducto implements ActionListener {
         vproducto.txtCantidad.setText("");
     }
 
-    private void llenarComboBox() {
-        ArrayList<Integer> marcas = cproducto.getMarcas();
+    public void llenarComboBox() {
+        cbxmodelo.removeAllElements();
+        ArrayList<ComboBoxHelper> marcas = cproducto.getMarcas();
         for (int i = 0; i < marcas.size(); i++) {
             cbxmodelo.addElement(marcas.get(i));
         }
     }
-    
     
 }
