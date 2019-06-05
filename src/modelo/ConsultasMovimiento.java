@@ -18,6 +18,64 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasMovimiento extends Conexion{
+    
+    public int idMovimientoProducto (String codigo){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT identrada FROM movimiento WHERE codigo=?";
+        int id = 0;
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setString(1, codigo);
+            rs = ps.executeQuery();
+            
+            if(rs.next()){
+                id = rs.getInt("identrada");
+            }
+            return id;
+            
+        }catch(SQLException e){
+            System.out.println(e);
+            return id;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
+    public boolean insertarMovimientoProducto (MovimientoProducto movprod){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        
+        String sql = "INSERT INTO movimiento_productos (idmovimiento, idproducto, cantidad) VALUES (?,?,?)";
+                
+        try{
+            ps = con.prepareStatement(sql);
+            
+            ps.setInt(1, movprod.getMovimiento());
+            ps.setInt(2, movprod.getActivo());
+            ps.setInt(3, movprod.getCantidad());
+            
+            ps.execute();
+            
+            System.out.println("Movimiento producto guardado");
+            return true;            
+        }catch(SQLException e){
+            System.out.println("Error al guardar Movimiento producto");
+            System.out.println(e);
+            return false;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean insertar(Movimiento mov){
         PreparedStatement ps;
         Connection con = getConnection();
@@ -30,7 +88,7 @@ public class ConsultasMovimiento extends Conexion{
             ps.setString(2, mov.getCodigo());
             ps.setInt(3, mov.getUbicacion());
             ps.setString(4, mov.getTipo());
-            ps.setString(5, mov.getTipo());
+            ps.setString(5, mov.getObservaciones());
             
             ps.execute();
             

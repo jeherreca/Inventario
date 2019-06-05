@@ -14,6 +14,7 @@ public class ListHelperProducto {
     private int cantidad;
     private String nombre;
     private String codigo;
+    
     public ListHelperProducto(int id, int cantidad, String nombre, String codigo) {
         this.id = id;
         this.cantidad = cantidad;
