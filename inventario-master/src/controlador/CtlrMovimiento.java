@@ -6,16 +6,12 @@
 package controlador;
 
 import inventario.ListHelper;
-import inventario.ListHelperProducto;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasMovimiento;
@@ -33,7 +29,7 @@ public class CtlrMovimiento implements ActionListener{
     private final Movimiento movimiento;
     private final MovimientoProducto movprod;
     private final ArrayList<MovimientoProducto> productos;
-    private final ConsultasMovimiento cmovimiento;
+    private final ConsultasMovimiento cmovimiento; 
     private final FrmActivos vmovimiento;
     private final FrmEntrada ventrada;
     private final FrmSalida vsalida;
@@ -82,30 +78,12 @@ public class CtlrMovimiento implements ActionListener{
                 agregarCliente();
             }
         });
-        this.vsalida.lstP1Salida.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt){
-                agregarProductoLista();
-            }
-        });
-        this.vsalida.lstP2Salida.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt){
-                restarProductoLista();
-            }
-        });
         this.vmovimiento.btnSalida.addActionListener(this);
         this.vmovimiento.btnEntrada.addActionListener(this);
         this.ventrada.btnAceptarEntrada.addActionListener(this);
-        this.ventrada.btnRestarEntrada.addActionListener(this);
-        this.ventrada.btnSumarEntrada.addActionListener(this);
         this.vsalida.btnAceptarSalida.addActionListener(this);
         this.vsalida.btnRestarSalida.addActionListener(this);
         this.vsalida.btnSumarSalida.addActionListener(this);
-        this.ventrada.lstP1Entrada.setModel(modelol1e);
-        this.ventrada.lstP2Entrada.setModel(modelol2e);
-        this.vsalida.lstP1Salida.setModel(modelol1s);
-        this.vsalida.lstP2Salida.setModel(modelol2s);
         this.vsalida.lstCliente.setModel(modelocliente);
         this.vmovimiento.jtbEntradas.setModel(modelotben);
         this.vmovimiento.jtbProEntradas.setModel(modelotbpen);
@@ -113,52 +91,11 @@ public class CtlrMovimiento implements ActionListener{
         this.vmovimiento.jtbProSalidas.setModel(modelotbpsa);
     }
     
-    public void agregarProductoLista(){
-        int index = vsalida.lstP1Salida.getSelectedIndex();
-        ListHelperProducto prod = (ListHelperProducto) modelol1s.getElementAt(index);
-        movprod.setActivo(prod.getId());
-    }
-    
     public void agregarCliente(){
         int index = vsalida.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modelocliente.getElementAt(index);
         movimiento.setUbicacion(cliente.getId());
         System.out.println(cliente.getId()); 
-    }
-    
-    public void llenarListaBodega(){
-        modelol1s.removeAllElements();
-        ArrayList<ListHelperProducto> bodega = cmovimiento.getBodega();
-        for (int i = 0; i < bodega.size(); i++) {
-            modelol1s.addElement(bodega.get(i));
-        }
-    }
-    
-    public void restarProductoLista(){
-        int index= vsalida.lstP2Salida.getSelectedIndex();
-        ListHelperProducto prod = (ListHelperProducto) modelol2s.getElementAt(index);
-        vsalida.txtCantidadSalida.setText(prod.getCantidad()+"");
-    }
-    public void llenarListaSalida(){
-        int index = vsalida.lstP1Salida.getSelectedIndex();
-        ListHelperProducto prod = (ListHelperProducto) modelol1s.getElementAt (index);
-        int sw = 0;
-        for (int i = 0; i < modelol2s.getSize(); i++) {
-            ListHelperProducto test = (ListHelperProducto) modelol1s.getElementAt (i);
-            if (movprod.getActivo() == test.getId()) {
-                sw = 1;
-                index = i ;
-            }
-        }
-        if (sw == 0) {
-            ListHelperProducto producto = new ListHelperProducto(prod.getId(), movprod.getCantidad(), prod.getNombre(), prod.getCodigo());
-            producto.setCantidad(movprod.getCantidad());
-            modelol2s.addElement(producto);
-        }else{
-            ListHelperProducto nuevo = (ListHelperProducto) modelol2s.getElementAt (index);
-            nuevo.setCantidad(movprod.getCantidad() + nuevo.getCantidad());
-        }
-        prod.setCantidad(prod.getCantidad() - movprod.getCantidad());
     }
     public void llenarListaClientes(){
         modelocliente.removeAllElements();
@@ -173,7 +110,6 @@ public class CtlrMovimiento implements ActionListener{
         if (e.getSource() == vmovimiento.btnSalida) {
             vsalida.setVisible(true);
             llenarListaClientes();
-            llenarListaBodega();
         }else{
             if (e.getSource() == vmovimiento.btnEntrada) {
                 ventrada.setVisible(true);       
@@ -182,7 +118,6 @@ public class CtlrMovimiento implements ActionListener{
                     try{
                         movprod.setCantidad(Integer.parseInt(vsalida.txtCantidadSalida.getText()));
                         productos.add(movprod);
-                        llenarListaSalida();
                         System.out.println(movprod);
                     }catch(NumberFormatException ex){
                         System.out.println(ex);

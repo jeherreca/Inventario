@@ -6,7 +6,6 @@
 package modelo;
 
 import inventario.ListHelper;
-import inventario.ListHelperProducto;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -165,34 +164,5 @@ public class ConsultasMovimiento extends Conexion{
             }
         }          
     }
-    
-    public ArrayList<ListHelperProducto> getBodega (){
-        PreparedStatement ps;
-        Connection con = getConnection();
-        ResultSet rs;
-        
-        String sql = "SELECT * FROM bodega";
-        ArrayList<ListHelperProducto> bodega = new ArrayList<>();
-        
-        try{
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            
-            while(rs.next()){
-                String[] respuestas = getNombreCodigoProducto(rs.getInt("idproducto"));
-                bodega.add(new ListHelperProducto(rs.getInt("idproducto"), rs.getInt("stock"), respuestas[1], respuestas[0]));
-            }
-            
-            return bodega;
-        }catch(SQLException e){
-            System.out.println(e);
-            return bodega;
-        }finally{
-            try{
-                con.close();
-            }catch(SQLException e){
-                System.out.println(e);
-            }
-        }
-    }
+
 }
