@@ -20,7 +20,7 @@ public class ConsultasBodega extends Conexion{
     public boolean insertar(Producto pro){
         PreparedStatement ps;
         Connection con = getConnection();
-        String sql = "INSERT INTO bodega (idproducto, stock) VALUES (?,?) ";
+        String sql = "INSERT INTO bodega (idproducto, cantidad) VALUES (?,?) ";
         int id = buscarIDProducto(pro.getCodigo());
         try{
             ps = con.prepareStatement(sql);
@@ -82,7 +82,7 @@ public class ConsultasBodega extends Conexion{
             rs = ps.executeQuery();
             
             while(rs.next()){
-                Bodega bodega = new Bodega(rs.getInt("idproducto"), rs.getInt("stock"));
+                Bodega bodega = new Bodega(rs.getInt("idproducto"), rs.getInt("cantidad"));
                 productos.add(bodega);
             }
             

@@ -43,9 +43,9 @@ public class FrmSalida extends javax.swing.JFrame {
         btnAceptarSalida = new javax.swing.JButton();
         txtCantidadSalida = new javax.swing.JTextField();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jtbP1Salida = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jtbP2Salida = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -87,7 +87,7 @@ public class FrmSalida extends javax.swing.JFrame {
 
         btnAceptarSalida.setText("Enviar salida");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jtbP1Salida.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -98,9 +98,9 @@ public class FrmSalida extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane5.setViewportView(jTable1);
+        jScrollPane5.setViewportView(jtbP1Salida);
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jtbP2Salida.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -111,7 +111,7 @@ public class FrmSalida extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane6.setViewportView(jTable2);
+        jScrollPane6.setViewportView(jtbP2Salida);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -218,8 +218,8 @@ public class FrmSalida extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    public javax.swing.JTable jtbP1Salida;
+    public javax.swing.JTable jtbP2Salida;
     public javax.swing.JList<String> lstCliente;
     public javax.swing.JTextField txtCantidadSalida;
     public javax.swing.JTextField txtCodigoSalida;

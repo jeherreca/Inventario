@@ -33,11 +33,12 @@ public class CtlrMovimiento implements ActionListener{
     private final FrmActivos vmovimiento;
     private final FrmEntrada ventrada;
     private final FrmSalida vsalida;
-    private final DefaultListModel modelol1e;
-    private final DefaultListModel modelol2e;
-    private final DefaultListModel modelol1s;
-    private final DefaultListModel modelol2s;
+    private final DefaultTableModel modelol1e;
+    private final DefaultTableModel modelol2e;
+    private final DefaultTableModel modelol1s;
+    private final DefaultTableModel modelol2s;
     private final DefaultListModel modelocliente;
+    private final DefaultListModel modeloclientes;
     private final DefaultTableModel modelotben;
     private final DefaultTableModel modelotbsa;
     private final DefaultTableModel modelotbpen;
@@ -51,11 +52,12 @@ public class CtlrMovimiento implements ActionListener{
         this.vmovimiento = vmovimiento;
         this.ventrada = ventrada;
         this.vsalida = vsalida;
-        this.modelol1e = new DefaultListModel();
-        this.modelol2e = new DefaultListModel();
-        this.modelol1s = new DefaultListModel();
-        this.modelol2s = new DefaultListModel();
+        this.modelol1e = new DefaultTableModel();
+        this.modelol2e = new DefaultTableModel();
+        this.modelol1s = new DefaultTableModel();
+        this.modelol2s = new DefaultTableModel();
         this.modelocliente = new DefaultListModel();
+        this.modeloclientes = new DefaultListModel();
         this.modelotben = new DefaultTableModel();
         this.modelotbsa = new DefaultTableModel();
         this.modelotbpen = new DefaultTableModel();
@@ -72,6 +74,12 @@ public class CtlrMovimiento implements ActionListener{
         this.modelotbpen.addColumn("Cantidad");
         this.modelotbpsa.addColumn("ID");
         this.modelotbpsa.addColumn("Cantidad");
+        this.modelol1s.addColumn("Código");
+        this.modelol1s.addColumn("Nombre");
+        this.modelol1s.addColumn("Cantidad");
+        this.modelol2s.addColumn("Código");
+        this.modelol2s.addColumn("Nombre");
+        this.modelol2s.addColumn("Cantidad");
         this.vsalida.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt){
@@ -85,6 +93,8 @@ public class CtlrMovimiento implements ActionListener{
         this.vsalida.btnRestarSalida.addActionListener(this);
         this.vsalida.btnSumarSalida.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
+        this.vsalida.jtbP1Salida.setModel(modelol1s);
+        this.vsalida.jtbP2Salida.setModel(modelol2s);
         this.vmovimiento.jtbEntradas.setModel(modelotben);
         this.vmovimiento.jtbProEntradas.setModel(modelotbpen);
         this.vmovimiento.jtbSalida.setModel(modelotbsa);

@@ -164,5 +164,55 @@ public class ConsultasMovimiento extends Conexion{
             }
         }          
     }
-
+    public ArrayList<Producto> getProductosBodega(){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT idproducto FROM bodega ";
+        
+        ArrayList<Producto> prod = new ArrayList<>();
+        
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                prod.add(rs.getInt("idproducto"));
+            }
+            return prod;
+        }catch(SQLException e){
+            
+            System.out.println(e);
+            return prod;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
+    
+    public Producto getProducto(int id){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT * FROM activo WHERE idproductos = ?";
+        
+        Producto prod;
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                 prod = new Producto();
+            }
+        }catch(SQLException e){
+            
+        }
+    }
 }
