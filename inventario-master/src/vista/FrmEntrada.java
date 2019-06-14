@@ -39,12 +39,12 @@ public class FrmEntrada extends javax.swing.JFrame {
         lstCliente = new javax.swing.JList<>();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        txtCantidadSalida = new javax.swing.JTextField();
-        btnSumarSalida = new javax.swing.JButton();
-        btnRestarSalida = new javax.swing.JButton();
+        jtbP1Entrada = new javax.swing.JTable();
+        txtCantidadEntrada = new javax.swing.JTextField();
+        btnSumarEntrada = new javax.swing.JButton();
+        btnRestarEntrada = new javax.swing.JButton();
         jScrollPane6 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jtbP2Entrada = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -70,7 +70,7 @@ public class FrmEntrada extends javax.swing.JFrame {
 
         jLabel2.setText("Productos a trasladar:");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jtbP1Entrada.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -81,18 +81,18 @@ public class FrmEntrada extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane5.setViewportView(jTable1);
+        jScrollPane5.setViewportView(jtbP1Entrada);
 
-        btnSumarSalida.setText(">>>");
+        btnSumarEntrada.setText(">>>");
 
-        btnRestarSalida.setText("<<<");
-        btnRestarSalida.addActionListener(new java.awt.event.ActionListener() {
+        btnRestarEntrada.setText("Remover producto");
+        btnRestarEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRestarSalidaActionPerformed(evt);
+                btnRestarEntradaActionPerformed(evt);
             }
         });
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jtbP2Entrada.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -103,7 +103,7 @@ public class FrmEntrada extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane6.setViewportView(jTable2);
+        jScrollPane6.setViewportView(jtbP2Entrada);
 
         jLabel1.setText("Cliente a trasladar:");
 
@@ -122,12 +122,15 @@ public class FrmEntrada extends javax.swing.JFrame {
                         .addGap(24, 24, 24)
                         .addComponent(jScrollPane4))
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAceptarEntrada)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRestarEntrada))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(156, 156, 156)
                                 .addComponent(jLabel5))
-                            .addComponent(btnAceptarEntrada)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -135,9 +138,8 @@ public class FrmEntrada extends javax.swing.JFrame {
                                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(btnSumarSalida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(btnRestarSalida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(txtCantidadSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(btnSumarEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(txtCantidadEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(jLabel2)
@@ -159,8 +161,7 @@ public class FrmEntrada extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtFechaEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0))
+                        .addComponent(txtFechaEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
@@ -171,27 +172,27 @@ public class FrmEntrada extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(46, 46, 46)
-                        .addComponent(txtCantidadSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCantidadEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSumarSalida)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRestarSalida))
+                        .addComponent(btnSumarEntrada))
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAceptarEntrada)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAceptarEntrada)
+                    .addComponent(btnRestarEntrada))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnRestarSalidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestarSalidaActionPerformed
+    private void btnRestarEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRestarEntradaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_btnRestarSalidaActionPerformed
+    }//GEN-LAST:event_btnRestarEntradaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -199,8 +200,8 @@ public class FrmEntrada extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAceptarEntrada;
-    public javax.swing.JButton btnRestarSalida;
-    public javax.swing.JButton btnSumarSalida;
+    public javax.swing.JButton btnRestarEntrada;
+    public javax.swing.JButton btnSumarEntrada;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -210,10 +211,10 @@ public class FrmEntrada extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
+    public javax.swing.JTable jtbP1Entrada;
+    public javax.swing.JTable jtbP2Entrada;
     public javax.swing.JList<String> lstCliente;
-    public javax.swing.JTextField txtCantidadSalida;
+    public javax.swing.JTextField txtCantidadEntrada;
     public javax.swing.JTextField txtCodigoEntrada;
     public javax.swing.JTextField txtFechaEntrada;
     public javax.swing.JTextArea txtObservacionesEntrada;

@@ -10,7 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class UbicacionProducto {
-    
+
     int idubicacion;
     int idproducto;
     int cantidad;
@@ -20,7 +20,7 @@ public class UbicacionProducto {
         this.idproducto = idproducto;
         this.cantidad = cantidad;
     }
-    
+
     public int getIdubicacion() {
         return idubicacion;
     }
@@ -44,6 +44,5 @@ public class UbicacionProducto {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
-    
-    
+
 }

@@ -16,11 +16,12 @@ import vista.FrmActivos;
  * @author Administrator
  */
 public final class CtlrBodega {
+
     private ConsultasBodega cbodega;
     private final FrmActivos vbodega;
     private final DefaultTableModel modelo;
-    
-    public CtlrBodega(ConsultasBodega cbodega, FrmActivos vbodega){
+
+    public CtlrBodega(ConsultasBodega cbodega, FrmActivos vbodega) {
         this.cbodega = cbodega;
         this.vbodega = vbodega;
         this.modelo = new DefaultTableModel();
@@ -29,16 +30,16 @@ public final class CtlrBodega {
         llenarTabla();
         this.vbodega.jtbBodega.setModel(modelo);
     }
-    
-        public ConsultasBodega getCbodega() {
+
+    public ConsultasBodega getCbodega() {
         return cbodega;
     }
 
     public void setCbodega(ConsultasBodega cbodega) {
         this.cbodega = cbodega;
     }
-    
-    public void llenarTabla(){
+
+    public void llenarTabla() {
         limpiarTablaBodega();
         ArrayList<Bodega> proveedores = cbodega.getBodegas();
         Object[] array = new Object[2];
@@ -48,8 +49,8 @@ public final class CtlrBodega {
             modelo.addRow(array);
         }
     }
-    
-    public void limpiarTablaBodega(){
+
+    public void limpiarTablaBodega() {
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
             modelo.removeRow(size - 1 - i);

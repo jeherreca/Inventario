@@ -16,85 +16,357 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class ConsultasMovimiento extends Conexion{
-    
-    public int idMovimientoProducto (String codigo){
+public class ConsultasMovimiento extends Conexion {
+    public boolean verificar (int id, int idcliente){
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
         
-        String sql = "SELECT identrada FROM movimiento WHERE codigo=?";
-        int id = 0;
+        String sql = "SELECT * FROM ubicacion_productos WHERE idproductos=? AND idubicacion=?";
+        boolean r = false;
         try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.setInt(2, idcliente);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                r = true;
+            }
+            return r;
+        }catch(SQLException e){
+            System.out.println(e);
+            return r;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public ArrayList<MovimientoProducto> getSalidasProd(String codigo) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT * FROM movimiento_productos WHERE idmovimiento=?";
+
+        ArrayList<MovimientoProducto> salprod = new ArrayList<>();
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, getIDByCode(codigo));
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                MovimientoProducto movprod = new MovimientoProducto();
+                movprod.setActivo(rs.getInt("idproducto"));
+                movprod.setCantidad(rs.getInt("cantidad"));
+                movprod.setMovimiento(rs.getInt("idmovimiento"));
+
+                salprod.add(movprod);
+            }
+
+            return salprod;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return salprod;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public ArrayList<Producto> getProductosByID(int id) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        ArrayList<Producto> prods = new ArrayList<>();
+
+        String sql = "SELECT idproductos, cantidad FROM ubicacion_productos WHERE idubicacion=?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Producto p = getProducto(rs.getInt("idproductos"));
+                p.setStock(rs.getInt("cantidad"));
+                prods.add(p);
+            }
+
+            return prods;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return prods;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public boolean sumarUbicacionProducto(int cantidad, int id, int idcliente) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+
+        String sql = "UPDATE ubicacion_productos SET cantidad = cantidad+? WHERE idproductos=? AND idubicacion=?";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, cantidad);
+            ps.setInt(2, id);
+            ps.setInt(3, idcliente);
+
+            ps.execute();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al sumar ubicacion producto: "+e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public boolean insertarUbicacionProducto(int idcliente, int cantidad, int idproducto) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+
+        String sql = "INSERT INTO ubicacion_productos (idubicacion, idproductos, cantidad) VALUES (?,?,?)";
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, idcliente);
+            ps.setInt(2, idproducto);
+            ps.setInt(3, cantidad);
+
+            ps.execute();
+
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al insertar ubicacion_producto: "+e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public int getIDByCode(String codigo) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT identrada FROM movimiento WHERE codigo=?";
+
+        int id = 0;
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, codigo);
             rs = ps.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 id = rs.getInt("identrada");
             }
             return id;
-            
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return id;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public boolean insertarMovimientoProducto (MovimientoProducto movprod){
+    public boolean sumarBodega(int cantidad, int id){
         PreparedStatement ps;
         Connection con = getConnection();
         
-        String sql = "INSERT INTO movimiento_productos (idmovimiento, idproducto, cantidad) VALUES (?,?,?)";
-                
+        String sql = "UPDATE bodega SET cantidad = cantidad+? WHERE idproducto=?";
+        
         try{
             ps = con.prepareStatement(sql);
+            ps.setInt(1, cantidad);
+            ps.setInt(2, id);
             
+            ps.execute();
+            return true;
+        } catch(SQLException e) {
+            System.out.println(e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch(SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public ArrayList<Movimiento> getMovimientos(String tipo) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT * FROM movimiento WHERE tipo=?";
+
+        ArrayList<Movimiento> salidas = new ArrayList<>();
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, tipo);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Movimiento mov = new Movimiento();
+                mov.setId(rs.getInt("identrada"));
+                mov.setFecha(rs.getDate("fecha"));
+                mov.setCodigo(rs.getString("codigo"));
+                mov.setUbicacion(rs.getInt("idubicacion"));
+                mov.setObservaciones(rs.getString("observaciones"));
+                mov.setTipo("salida");
+
+                salidas.add(mov);
+            }
+
+            return salidas;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return salidas;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+
+    }
+
+    public boolean insertarMovimientoProducto(MovimientoProducto movprod) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+
+        String sql = "INSERT INTO movimiento_productos (idmovimiento, idproducto, cantidad) VALUES (?,?,?)";
+
+        try {
+            ps = con.prepareStatement(sql);
+
             ps.setInt(1, movprod.getMovimiento());
             ps.setInt(2, movprod.getActivo());
             ps.setInt(3, movprod.getCantidad());
-            
+
             ps.execute();
-            
+
             System.out.println("Movimiento producto guardado");
-            return true;            
-        }catch(SQLException e){
+            return true;
+        } catch (SQLException e) {
             System.out.println("Error al guardar Movimiento producto");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public boolean insertar(Movimiento mov){
+
+    public boolean insertar(Movimiento mov) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "INSERT INTO movimiento (fecha, codigo, idubicacion, tipo, observaciones) VALUES (?,?,?,?,?)";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setDate(1, new java.sql.Date(mov.getFecha().getTime()));
             ps.setString(2, mov.getCodigo());
             ps.setInt(3, mov.getUbicacion());
             ps.setString(4, mov.getTipo());
             ps.setString(5, mov.getObservaciones());
+
+            ps.execute();
+
+            System.out.println("Movimiento guardado");
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al guardar movimiento");
+            System.out.println(e);
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public ArrayList<ListHelper> getClientes() {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT idubicaciones, nombre FROM ubicaciones";
+        ArrayList<ListHelper> clientes = new ArrayList<>();
+
+        try {
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                clientes.add(new ListHelper(rs.getInt("idubicaciones"), rs.getString("nombre")));
+            }
+
+            return clientes;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return clientes;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public boolean restarCliente(int cantidad, int idcliente, int id){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        
+        String sql = "UPDATE ubicacion_productos SET cantidad=cantidad-? WHERE idproductos=? AND idubicacion=?";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, cantidad);
+            ps.setInt(2, id);
+            ps.setInt(3, idcliente);
             
             ps.execute();
             
-            System.out.println("Movimiento guardado");
+            System.out.println("Ubicacion modificada");
             return true;
-        }catch(SQLException e){
-            System.out.println("Error al guardar movimiento");
+        }catch(SQLException e) {
             System.out.println(e);
             return false;
         }finally{
@@ -104,115 +376,154 @@ public class ConsultasMovimiento extends Conexion{
                 System.out.println(e);
             }
         }
-    } 
-    public ArrayList<ListHelper> getClientes(){
+    }
+    public boolean restarBodega(int cantidad, int id) {
         PreparedStatement ps;
         Connection con = getConnection();
-        ResultSet rs;
-        
-        String sql = "SELECT idubicaciones, nombre FROM ubicaciones";
-        ArrayList<ListHelper> clientes = new ArrayList<>();
-        
-        try{
+
+        String sql = "UPDATE bodega SET cantidad=cantidad-? WHERE idproducto=?";
+
+        try {
             ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            
-            while(rs.next()){
-                clientes.add(new ListHelper (rs.getInt("idubicaciones"), rs.getString("nombre")));
-            }
-            
-            return clientes;
-        }catch(SQLException e){
+            ps.setInt(1, cantidad);
+            ps.setInt(2, id);
+
+            ps.execute();
+
+            System.out.println("Bodega modificada");
+            return true;
+        } catch (SQLException e) {
             System.out.println(e);
-            return clientes;
-        }finally{
-            try{
+            return false;
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
-        
+
     }
+
     public String[] getNombreCodigoProducto(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
+
         String[] respuestas = new String[2];
         String sql = "SELECT codigo, nombre FROM activo WHERE idproductos=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 respuestas[0] = rs.getString("codigo");
                 respuestas[1] = rs.getString("nombre");
             }
-            
+
             return respuestas;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return respuestas;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
-                System.out.println(e);
-            }
-        }          
-    }
-    public ArrayList<Producto> getProductosBodega(){
-        PreparedStatement ps;
-        Connection con = getConnection();
-        ResultSet rs;
-        
-        String sql = "SELECT idproducto FROM bodega ";
-        
-        ArrayList<Producto> prod = new ArrayList<>();
-        
-        try{
-            ps = con.prepareStatement(sql);
-            rs = ps.executeQuery();
-            
-            while(rs.next()){
-                prod.add(rs.getInt("idproducto"));
-            }
-            return prod;
-        }catch(SQLException e){
-            
-            System.out.println(e);
-            return prod;
-        }finally{
-            try{
-                con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public Producto getProducto(int id){
+
+    public ArrayList<Producto> getProductosBodega() {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
+
+        String sql = "SELECT * FROM bodega ";
+
+        ArrayList<Producto> prod = new ArrayList<>();
+
+        try {
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                prod.add(getProducto(rs.getInt("idproducto")));
+                prod.get(prod.size() - 1).setStock(rs.getInt("cantidad"));
+            }
+            return prod;
+        } catch (SQLException e) {
+
+            System.out.println(e);
+            return prod;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public Producto getProductoByCodigo(String codigo) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT * FROM activo WHERE codigo = ?";
+
+        Producto prod = new Producto();
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setString(1, codigo);
+
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                prod = new Producto(rs.getInt("idproductos"), rs.getString("codigo"), rs.getString("nombre"), rs.getString("descripcion"), rs.getDouble("peso"), rs.getInt("idmarca"), rs.getInt("cantidad"));
+            }
+            return prod;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return prod;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public Producto getProducto(int id) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
         String sql = "SELECT * FROM activo WHERE idproductos = ?";
-        
-        Producto prod;
-        try{
+
+        Producto prod = new Producto();
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
-            
+
             rs = ps.executeQuery();
-            
+
             if (rs.next()) {
-                 prod = new Producto();
+                prod = new Producto(rs.getInt("idproductos"), rs.getString("codigo"), rs.getString("nombre"), rs.getString("descripcion"), rs.getDouble("peso"), rs.getInt("idmarca"), rs.getInt("cantidad"));
             }
-        }catch(SQLException e){
-            
+            return prod;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return prod;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
         }
     }
 }

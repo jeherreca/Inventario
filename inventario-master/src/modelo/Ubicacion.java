@@ -10,7 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class Ubicacion {
-    
+
     private int id;
     private String nombre;
     private String telefono;
@@ -30,7 +30,6 @@ public class Ubicacion {
     public Ubicacion() {
     }
 
-    
     public int getId() {
         return id;
     }
@@ -78,6 +77,5 @@ public class Ubicacion {
     public void setIdentificacion(String identificacion) {
         this.identificacion = identificacion;
     }
-    
-    
+
 }

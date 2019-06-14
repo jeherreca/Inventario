@@ -19,8 +19,8 @@ import vista.FrmActivos;
  *
  * @author Administrator
  */
-public final class CtlrMarca implements ActionListener{
-    
+public final class CtlrMarca implements ActionListener {
+
     private final Marca marca;
     private final ConsultasMarca cmarca;
     private final CtlrProducto ctlrproducto;
@@ -44,9 +44,10 @@ public final class CtlrMarca implements ActionListener{
         llenarTabla();
         this.vmarca.jtbMarca.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt){
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 getSelectedMarca();
                 llenarTablaProductos();
+                changeLabels();
             }
         });
         this.vmarca.btnEliminarMarca.addActionListener(this);
@@ -56,22 +57,25 @@ public final class CtlrMarca implements ActionListener{
         this.vmarca.jtbMarca.setModel(modelomarca);
         this.vmarca.jtbMarcaProducto.setModel(modelomp);
     }
-    public void limpiarTabla(){
+
+    public void limpiarTabla() {
         int size = modelomarca.getRowCount();
         for (int i = 0; i < size; i++) {
             modelomarca.removeRow(size - 1 - i);
         }
     }
-    public void limpiarTablaProductos(){
+
+    public void limpiarTablaProductos() {
         int size = modelomp.getRowCount();
         for (int i = 0; i < size; i++) {
             modelomp.removeRow(size - 1 - i);
         }
     }
-    public void llenarTablaProductos(){
+
+    public void llenarTablaProductos() {
         limpiarTablaProductos();
         ArrayList<Producto> productos = cmarca.buscarProductos(marca);
-        Object[] array= new Object[4];
+        Object[] array = new Object[4];
         for (int i = 0; i < productos.size(); i++) {
             array[0] = productos.get(i).getCodigo();
             array[1] = productos.get(i).getNombre();
@@ -80,7 +84,13 @@ public final class CtlrMarca implements ActionListener{
             modelomp.addRow(array);
         }
     }
-    public void llenarTabla(){
+    public void changeLabels(){
+        int fila = vmarca.jtbMarca.getSelectedRow();
+        String id = vmarca.jtbMarca.getValueAt(fila, 0).toString();
+        vmarca.lblPesoMarca.setText(cmarca.getSum(Integer.parseInt(id),"peso" )+"");
+        vmarca.lblCantidadMarca.setText(cmarca.getSum(Integer.parseInt(id),"cantidad" )+"");
+    }
+    public void llenarTabla() {
         limpiarTabla();
         ArrayList<Marca> marcas = cmarca.getMarcas();
         Object[] array = new Object[2];
@@ -90,44 +100,46 @@ public final class CtlrMarca implements ActionListener{
             modelomarca.addRow(array);
         }
     }
-    public void getSelectedMarca(){
+
+    public void getSelectedMarca() {
         int fila = vmarca.jtbMarca.getSelectedRow();
-        String id = vmarca.jtbMarca.getValueAt(fila,0).toString();
-        String[] rs =cmarca.buscarElemento(id);
-            marca.setId(Integer.parseInt(rs[0]));
-            vmarca.txtIDMarca.setText(rs[0]);
-            marca.setNombre(rs[1]);
-            vmarca.txtNombreMarca.setText(rs[1]);
-            marca.setObservaciones(rs[2]);
-            vmarca.txtObservaciones.setText(rs[2]);
+        String id = vmarca.jtbMarca.getValueAt(fila, 0).toString();
+        String[] rs = cmarca.buscarElemento(id);
+        marca.setId(Integer.parseInt(rs[0]));
+        vmarca.txtIDMarca.setText(rs[0]);
+        marca.setNombre(rs[1]);
+        vmarca.txtNombreMarca.setText(rs[1]);
+        marca.setObservaciones(rs[2]);
+        vmarca.txtObservaciones.setText(rs[2]);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vmarca.btnBuscarMarca) {
             marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
             if (cmarca.buscar(marca)) {
-                vmarca.txtIDMarca.setText(marca.getId()+"");
+                vmarca.txtIDMarca.setText(marca.getId() + "");
                 vmarca.txtNombreMarca.setText(marca.getNombre());
                 vmarca.txtObservaciones.setText(marca.getObservaciones());
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "No se encontro registro");
                 limpiar();
             }
-            
-        }else{
-            if(e.getSource() == vmarca.btnEliminarMarca){
+
+        } else {
+            if (e.getSource() == vmarca.btnEliminarMarca) {
                 marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
                 if (cmarca.eliminar(marca)) {
                     JOptionPane.showMessageDialog(null, "Marca eliminada");
                     ctlrproducto.llenarComboBox();
                     limpiar();
                     llenarTabla();
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Error al eliminar");
                     limpiar();
                     llenarTabla();
                 }
-            }else{
+            } else {
                 if (e.getSource() == vmarca.btnInsertarMarca) {
                     marca.setNombre(vmarca.txtNombreMarca.getText());
                     marca.setObservaciones(vmarca.txtObservaciones.getText());
@@ -136,23 +148,23 @@ public final class CtlrMarca implements ActionListener{
                         limpiar();
                         llenarTabla();
                         ctlrproducto.llenarComboBox();
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(null, "Error al insertar marca");
-                        limpiar ();
+                        limpiar();
                         llenarTabla();
                     }
-                    
-                }else{
+
+                } else {
                     if (e.getSource() == vmarca.btnModificarMarca) {
                         marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
                         marca.setNombre(vmarca.txtNombreMarca.getText());
                         marca.setObservaciones(vmarca.txtObservaciones.getText());
-                        
+
                         if (cmarca.modificar(marca)) {
                             JOptionPane.showMessageDialog(null, "Marca modificada");
                             limpiar();
                             llenarTabla();
-                        }else{
+                        } else {
                             JOptionPane.showMessageDialog(null, "Error al modificar marca");
                             limpiar();
                             llenarTabla();
@@ -160,16 +172,14 @@ public final class CtlrMarca implements ActionListener{
                     }
                 }
             }
-            
+
         }
     }
-    
-    public void limpiar(){
+
+    public void limpiar() {
         vmarca.txtIDMarca.setText("");
         vmarca.txtNombreMarca.setText("");
         vmarca.txtObservaciones.setText("");
     }
 
-    
-    
 }

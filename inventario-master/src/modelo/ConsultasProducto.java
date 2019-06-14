@@ -16,100 +16,102 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class ConsultasProducto extends Conexion{
-    
-    public ArrayList<ComboBoxHelper> getMarcas(){
+public class ConsultasProducto extends Conexion {
+
+    public ArrayList<ComboBoxHelper> getMarcas() {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
-        
+
         String sql = "SELECT idmarca, nombre FROM marca";
         ArrayList<ComboBoxHelper> marcas = new ArrayList<>();
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 marcas.add(new ComboBoxHelper(rs.getInt("idmarca"), rs.getString("nombre")));
             }
             return marcas;
-            
-        }catch(SQLException e){
+
+        } catch (SQLException e) {
             System.out.println(e);
             return marcas;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public ArrayList<Producto> getProductos(){
+
+    public ArrayList<Producto> getProductos() {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
-        
+
         String sql = "SELECT * FROM activo";
         ArrayList<Producto> productos = new ArrayList<>();
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 Producto prod = new Producto(rs.getInt("idproductos"), rs.getString("codigo"), rs.getString("nombre"), rs.getString("descripcion"), rs.getDouble("peso"), rs.getInt("idmarca"), rs.getInt("cantidad"));
                 productos.add(prod);
             }
             return productos;
-            
-            
-        }catch(SQLException e){
+
+        } catch (SQLException e) {
             System.out.println(e);
             return productos;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public String getNombreMarca (int id){
+
+    public String getNombreMarca(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
         String nombre = "";
         String sql = "SELECT nombre FROM marca WHERE idmarca=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
-            if(rs.next()){
+
+            if (rs.next()) {
                 nombre = rs.getString("nombre");
             }
             return nombre;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return nombre;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public boolean insertar(Producto pro){
+
+    public boolean insertar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "INSERT INTO activo (codigo, nombre, descripcion, peso, idmarca, cantidad) VALUES (?,?,?,?,?,?)";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, pro.getCodigo());
             ps.setString(2, pro.getNombre());
@@ -117,59 +119,59 @@ public class ConsultasProducto extends Conexion{
             ps.setDouble(4, pro.getPeso());
             ps.setInt(5, pro.getMarca());
             ps.setInt(6, pro.getStock());
-            
+
             ps.execute();
-            
+
             System.out.println("Producto guardado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al guardar producto");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
-            
+
         }
     }
-    
-    public boolean eliminar(Producto pro){
+
+    public boolean eliminar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "DELETE FROM activo WHERE idproductos=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, pro.getId());
-            
+
             ps.execute();
-            
+
             System.out.println("Producto eliminado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al eliminar el producto");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
-            }  
+            }
         }
     }
-    
-    public boolean modificar(Producto pro){
+
+    public boolean modificar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "UPDATE activo SET codigo=?, nombre=?, descripcion=?, peso=?, idmarca=?, cantidad=? WHERE idproductos=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, pro.getCodigo());
             ps.setString(2, pro.getNombre());
@@ -178,68 +180,68 @@ public class ConsultasProducto extends Conexion{
             ps.setInt(5, pro.getMarca());
             ps.setInt(6, pro.getStock());
             ps.setInt(7, pro.getId());
-            
+
             ps.execute();
-            
+
             System.out.println("Producto modificado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al modificar el producto");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public String[] buscarElemento(String codigo){
+
+    public String[] buscarElemento(String codigo) {
         String[] resultados = new String[7];
         PreparedStatement ps;
         ResultSet rs;
-        Connection conn = getConnection();   
-        try{       
+        Connection conn = getConnection();
+        try {
             ps = conn.prepareStatement("SELECT idproductos, codigo, nombre, descripcion, peso, idmarca, cantidad FROM activo WHERE codigo=?");
             ps.setString(1, codigo);
-            rs= ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
-                resultados[0]=rs.getInt("idproductos")+"";
-                resultados[1]=rs.getString("codigo")+"";
-                resultados[2]=rs.getString("nombre")+"";
-                resultados[3]=rs.getString("descripcion")+"";
-                resultados[4]=rs.getDouble("peso")+"";
-                resultados[5]=rs.getInt("idmarca")+"";
-                resultados[6]=rs.getInt("cantidad")+"";
+                resultados[0] = rs.getInt("idproductos") + "";
+                resultados[1] = rs.getString("codigo") + "";
+                resultados[2] = rs.getString("nombre") + "";
+                resultados[3] = rs.getString("descripcion") + "";
+                resultados[4] = rs.getDouble("peso") + "";
+                resultados[5] = rs.getInt("idmarca") + "";
+                resultados[6] = rs.getInt("cantidad") + "";
             }
             return resultados;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return resultados;
-        }finally{
-            try{
+        } finally {
+            try {
                 conn.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public boolean buscar(Producto pro){
+
+    public boolean buscar(Producto pro) {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
-        
+
         String sql = "SELECT * FROM activo WHERE codigo=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, pro.getCodigo());
-            
-            rs= ps.executeQuery();
-            if(rs.next()){
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
                 pro.setId(rs.getInt("idproductos"));
                 pro.setCodigo(rs.getString("codigo"));
                 pro.setNombre(rs.getString("nombre"));
@@ -247,19 +249,19 @@ public class ConsultasProducto extends Conexion{
                 pro.setPeso(rs.getDouble("peso"));
                 pro.setMarca(rs.getInt("idmarca"));
                 pro.setStock(rs.getInt("cantidad"));
-                
+
                 return true;
             }
             System.out.println("Producto no encontrado");
             return false;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al buscar el producto");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }

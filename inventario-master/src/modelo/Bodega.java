@@ -10,6 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class Bodega {
+
     private int idproducto;
     private int stock;
 
@@ -17,10 +18,11 @@ public class Bodega {
         this.idproducto = idproducto;
         this.stock = stock;
     }
-    
-    public Bodega(){
-        
+
+    public Bodega() {
+
     }
+
     public int getIdproducto() {
         return idproducto;
     }
@@ -36,6 +38,5 @@ public class Bodega {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    
-    
+
 }

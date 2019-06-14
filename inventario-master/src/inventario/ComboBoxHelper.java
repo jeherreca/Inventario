@@ -10,9 +10,10 @@ package inventario;
  * @author Administrator
  */
 public class ComboBoxHelper {
+
     private int id;
     private String name;
-    
+
     public ComboBoxHelper(int id, String name) {
         this.id = id;
         this.name = name;

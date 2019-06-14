@@ -89,8 +89,8 @@ public class FrmActivos extends javax.swing.JFrame {
         jtbProveedores = new javax.swing.JTable();
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
-        jLabel24 = new javax.swing.JLabel();
-        jLabel25 = new javax.swing.JLabel();
+        lblPesoCliente = new javax.swing.JLabel();
+        lblCantidadCliente = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         jplActivos = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -302,7 +302,7 @@ public class FrmActivos extends javax.swing.JFrame {
         ));
         jScrollPane6.setViewportView(jtbMarcaProducto);
 
-        jLabel14.setText("Peso por marca:");
+        jLabel14.setText("Peso por marca (Kg):");
 
         jLabel15.setText("Cantidad por marca:");
 
@@ -356,9 +356,9 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addComponent(txtNombreMarca)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(btnModificarMarca)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnInsertarMarca)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnModificarMarca)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEliminarMarca)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 222, Short.MAX_VALUE)
@@ -385,7 +385,7 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addGap(7, 7, 7)
                         .addComponent(jLabel13)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE))
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jLabel8)
@@ -401,13 +401,13 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(14, 14, 14)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnEliminarMarca)
-                            .addComponent(btnInsertarMarca)
-                            .addComponent(btnModificarMarca))
+                            .addComponent(btnModificarMarca)
+                            .addComponent(btnInsertarMarca))
                         .addGap(10, 10, 10))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -474,13 +474,13 @@ public class FrmActivos extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(jtbProveedores);
 
-        jLabel22.setText("Peso por cliente:");
+        jLabel22.setText("Peso por cliente (Kg):");
 
         jLabel23.setText("Cantidad por cliente:");
 
-        jLabel24.setText("#");
+        lblPesoCliente.setText("#");
 
-        jLabel25.setText("#");
+        lblCantidadCliente.setText("#");
 
         jLabel26.setText("Productos por cliente:");
 
@@ -537,8 +537,8 @@ public class FrmActivos extends javax.swing.JFrame {
                                     .addComponent(jLabel22))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel24)
-                                    .addComponent(jLabel25)))
+                                    .addComponent(lblPesoCliente)
+                                    .addComponent(lblCantidadCliente)))
                             .addComponent(jLabel26))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -585,12 +585,12 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel24)
+                            .addComponent(lblPesoCliente)
                             .addComponent(jLabel22))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel23)
-                            .addComponent(jLabel25))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblCantidadCliente)
+                            .addComponent(jLabel23))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -629,7 +629,7 @@ public class FrmActivos extends javax.swing.JFrame {
 
         cbxMarca.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel6.setText("Peso:");
+        jLabel6.setText("Peso (Kg):");
 
         txtPeso.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -672,12 +672,11 @@ public class FrmActivos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jplActivosLayout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(btnEliminar)
-                        .addGap(18, 18, 18)
                         .addComponent(btnInsertar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnModificar))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnModificar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEliminar))
                     .addGroup(jplActivosLayout.createSequentialGroup()
                         .addGroup(jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -701,7 +700,7 @@ public class FrmActivos extends javax.swing.JFrame {
                         .addComponent(txtIDActivo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel5)))
-                .addContainerGap(276, Short.MAX_VALUE))
+                .addContainerGap(274, Short.MAX_VALUE))
         );
         jplActivosLayout.setVerticalGroup(
             jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -743,8 +742,8 @@ public class FrmActivos extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                         .addGroup(jplActivosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btnModificar)
-                            .addComponent(btnInsertar)
-                            .addComponent(btnEliminar)))
+                            .addComponent(btnEliminar)
+                            .addComponent(btnInsertar)))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 394, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -755,7 +754,7 @@ public class FrmActivos extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1005, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -834,8 +833,6 @@ public class FrmActivos extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel24;
-    private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -873,7 +870,9 @@ public class FrmActivos extends javax.swing.JFrame {
     public javax.swing.JTable jtbProveedores;
     public javax.swing.JTable jtbSalida;
     public javax.swing.JTable jtbUbicacionProducto;
+    public javax.swing.JLabel lblCantidadCliente;
     public javax.swing.JLabel lblCantidadMarca;
+    public javax.swing.JLabel lblPesoCliente;
     public javax.swing.JLabel lblPesoMarca;
     public javax.swing.JTextField txtCantidad;
     public javax.swing.JTextField txtCiudad;

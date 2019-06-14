@@ -15,85 +15,85 @@ import java.util.ArrayList;
  *
  * @author Administrator
  */
-public class ConsultasBodega extends Conexion{
-   
-    public boolean insertar(Producto pro){
+public class ConsultasBodega extends Conexion {
+
+    public boolean insertar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();
         String sql = "INSERT INTO bodega (idproducto, cantidad) VALUES (?,?) ";
         int id = buscarIDProducto(pro.getCodigo());
-        try{
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
-            ps.setInt(2,pro.getStock());
-            
+            ps.setInt(2, pro.getStock());
+
             ps.execute();
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public int buscarIDProducto(String codigo){
+
+    public int buscarIDProducto(String codigo) {
         PreparedStatement ps;
         Connection con = getConnection();
         String sql = "SELECT idproductos FROM activo WHERE codigo =?";
-        ResultSet rs ;
+        ResultSet rs;
         int id = 0;
-        try{
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, codigo);
-            
+
             rs = ps.executeQuery();
-            
-            if(rs.next()){
-                
+
+            if (rs.next()) {
+
                 id = rs.getInt("idproductos");
             }
             return id;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return id;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public ArrayList<Bodega> getBodegas(){
+
+    public ArrayList<Bodega> getBodegas() {
         PreparedStatement ps;
         Connection con = getConnection();
         String sql = "SELECT * FROM bodega";
         ResultSet rs;
         ArrayList<Bodega> productos = new ArrayList<>();
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 Bodega bodega = new Bodega(rs.getInt("idproducto"), rs.getInt("cantidad"));
                 productos.add(bodega);
             }
-            
+
             return productos;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return productos;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }

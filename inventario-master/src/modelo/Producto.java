@@ -10,7 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class Producto {
-    
+
     private int id;
     private String codigo;
     private String nombre;
@@ -18,7 +18,7 @@ public class Producto {
     private Double peso;
     private int marca;
     private int stock;
-    
+
     public Producto(int id, String codigo, String nombre, String descripcion, Double peso, int marca, int stock) {
         this.id = id;
         this.codigo = codigo;
@@ -28,11 +28,10 @@ public class Producto {
         this.marca = marca;
         this.stock = stock;
     }
-    
-    public Producto (){
-        
-    }
 
+    public Producto() {
+
+    }
 
     public int getId() {
         return id;
@@ -43,7 +42,7 @@ public class Producto {
     }
 
     public String getCodigo() {
-    return codigo;
+        return codigo;
     }
 
     public void setCodigo(String codigo) {
@@ -89,6 +88,5 @@ public class Producto {
     public void setStock(int stock) {
         this.stock = stock;
     }
-    
-    
+
 }

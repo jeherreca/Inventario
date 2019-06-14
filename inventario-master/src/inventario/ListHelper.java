@@ -10,10 +10,11 @@ package inventario;
  * @author Administrator
  */
 public class ListHelper {
+
     private int id;
     private String name;
-    
-    public ListHelper (int id, String name) {
+
+    public ListHelper(int id, String name) {
         this.id = id;
         this.name = name;
     }

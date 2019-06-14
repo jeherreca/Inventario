@@ -10,6 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class MovimientoProducto {
+
     int movimiento;
     int activo;
     int cantidad;
@@ -37,10 +38,10 @@ public class MovimientoProducto {
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
     }
-    
+
     @Override
-    public String toString(){
-        return activo+" + "+cantidad;
+    public String toString() {
+        return activo + " + " + cantidad;
     }
-    
+
 }

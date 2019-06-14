@@ -12,13 +12,14 @@ import java.util.Date;
  * @author Administrator
  */
 public class Movimiento {
+
     private int id;
     private String codigo;
     private int ubicacion;
     private String tipo;
     private Date fecha;
     private String observaciones;
-    
+
     public int getId() {
         return id;
     }
@@ -66,6 +67,5 @@ public class Movimiento {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-    
-    
+
 }

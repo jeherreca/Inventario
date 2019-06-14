@@ -29,32 +29,32 @@ import vista.FrmSalida;
  * @author Administrator
  */
 public class Inventario {
-    
+
     public static void main(String[] args) {
-        
+
         Producto producto = new Producto();
         ConsultasProducto cproducto = new ConsultasProducto();
         FrmActivos vproducto = new FrmActivos();
         FrmEntrada ventrada = new FrmEntrada();
         FrmSalida vsalida = new FrmSalida();
-        
+
         Marca marca = new Marca();
         ConsultasMarca cmarca = new ConsultasMarca();
-        
+
         Ubicacion ubicacion = new Ubicacion();
-        ConsultasUbicacion cubicacion= new ConsultasUbicacion();
-        
+        ConsultasUbicacion cubicacion = new ConsultasUbicacion();
+
         ConsultasBodega conBodega = new ConsultasBodega();
         CtlrBodega cbodega = new CtlrBodega(conBodega, vproducto);
-        
+
         Movimiento mov = new Movimiento();
         MovimientoProducto movprod = new MovimientoProducto();
         ConsultasMovimiento cmov = new ConsultasMovimiento();
-        
+
         CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto, cbodega);
         CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto, ctlrprod);
         CtlrUbicacion ctlrubic = new CtlrUbicacion(ubicacion, cubicacion, vproducto);
-        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida);
+        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida, cbodega);
         vproducto.setVisible(true);
     }
 }

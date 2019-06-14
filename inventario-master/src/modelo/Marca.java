@@ -10,6 +10,7 @@ package modelo;
  * @author Administrator
  */
 public class Marca {
+
     public int id;
     public String nombre;
     public String observaciones;
@@ -19,10 +20,11 @@ public class Marca {
         this.nombre = nombre;
         this.observaciones = observaciones;
     }
-    
-    public Marca(){
-        
+
+    public Marca() {
+
     }
+
     public int getId() {
         return id;
     }
@@ -46,6 +48,5 @@ public class Marca {
     public void setObservaciones(String observaciones) {
         this.observaciones = observaciones;
     }
-    
-    
+
 }

@@ -16,134 +16,133 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasUbicacion extends Conexion {
-    
-    public ArrayList<UbicacionProducto> buscarProductos(Ubicacion ubi){
+
+    public ArrayList<UbicacionProducto> buscarProductos(Ubicacion ubi) {
         PreparedStatement ps;
-        Connection con=getConnection();
+        Connection con = getConnection();
         ArrayList<UbicacionProducto> productos = new ArrayList<>();
         String sql = "SELECT * FROM ubicacion_productos WHERE idubicacion=?";
         ResultSet rs;
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, ubi.getId());
-            
+
             rs = ps.executeQuery();
-            
-            while(rs.next()){
-                UbicacionProducto pro  = new UbicacionProducto(rs.getInt("idubicacion"), rs.getInt("idproductos"), rs.getInt("cantidad"));
+
+            while (rs.next()) {
+                UbicacionProducto pro = new UbicacionProducto(rs.getInt("idubicacion"), rs.getInt("idproductos"), rs.getInt("cantidad"));
                 productos.add(pro);
             }
             return productos;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return productos;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public ArrayList<Ubicacion> getUbicacion(){
+
+    public ArrayList<Ubicacion> getUbicacion() {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
-        
+
         String sql = "SELECT * FROM ubicaciones";
         ArrayList<Ubicacion> ubicaciones = new ArrayList<>();
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
-            
-            while(rs.next()){
+
+            while (rs.next()) {
                 Ubicacion ubicacion = new Ubicacion(rs.getInt("idubicaciones"), rs.getString("nombre"), rs.getString("contacto"), rs.getString("direccion"), rs.getString("ciudad"), rs.getString("identificacion"));
                 ubicaciones.add(ubicacion);
             }
             return ubicaciones;
-            
-            
-        }catch(SQLException e){
+
+        } catch (SQLException e) {
             System.out.println(e);
             return ubicaciones;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public boolean insertar(Ubicacion ubicaciones){
+
+    public boolean insertar(Ubicacion ubicaciones) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "INSERT INTO ubicaciones (nombre, contacto, direccion, ciudad, identificacion) VALUES (?,?,?,?,?)";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, ubicaciones.getNombre());
             ps.setString(2, ubicaciones.getTelefono());
             ps.setString(3, ubicaciones.getDireccion());
             ps.setString(4, ubicaciones.getCiudad());
             ps.setString(5, ubicaciones.getIdentificacion());
-            
+
             ps.execute();
-            
+
             System.out.println("Proveedor guardado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al guardar proveedor");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
-            
+
         }
     }
-    
-    public boolean eliminar(Ubicacion pro){
+
+    public boolean eliminar(Ubicacion pro) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "DELETE FROM ubicaciones WHERE idubicaciones=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, pro.getId());
-            
+
             ps.execute();
-            
+
             System.out.println("Proveedor eliminado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al eliminar el proveedor");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
-            }  
+            }
         }
     }
-    
-    public boolean modificar(Ubicacion pro){
+
+    public boolean modificar(Ubicacion pro) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "UPDATE ubicaciones SET nombre=?, contacto=?, direccion=?, ciudad=?, identificacion=? WHERE idubicaciones=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setString(1, pro.getNombre());
             ps.setString(2, pro.getTelefono());
@@ -151,86 +150,149 @@ public class ConsultasUbicacion extends Conexion {
             ps.setString(4, pro.getCiudad());
             ps.setString(5, pro.getIdentificacion());
             ps.setInt(6, pro.getId());
-            
+
             ps.execute();
-            
+
             System.out.println("Proveedor modificado");
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al modificar el proveedor");
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public String[] buscarElemento(String id){
+
+    public String[] buscarElemento(String id) {
         String[] resultados = new String[6];
         PreparedStatement ps;
         ResultSet rs;
-        Connection conn = getConnection();   
-        try{       
+        Connection conn = getConnection();
+        try {
             ps = conn.prepareStatement("SELECT idubicaciones, nombre, contacto, direccion, ciudad, identificacion FROM ubicaciones WHERE idubicaciones=?");
             ps.setString(1, id);
-            rs= ps.executeQuery();
+            rs = ps.executeQuery();
             if (rs.next()) {
-                resultados[0]=rs.getInt("idubicaciones")+"";
-                resultados[1]=rs.getString("nombre")+"";
-                resultados[2]=rs.getString("contacto")+"";
-                resultados[3]=rs.getString("direccion")+"";
-                resultados[4]=rs.getString("ciudad")+"";
-                resultados[5]=rs.getString("identificacion")+"";
+                resultados[0] = rs.getInt("idubicaciones") + "";
+                resultados[1] = rs.getString("nombre") + "";
+                resultados[2] = rs.getString("contacto") + "";
+                resultados[3] = rs.getString("direccion") + "";
+                resultados[4] = rs.getString("ciudad") + "";
+                resultados[5] = rs.getString("identificacion") + "";
             }
             return resultados;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e);
             return resultados;
-        }finally{
-            try{
+        } finally {
+            try {
                 conn.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    public boolean buscar(Ubicacion pro){
+
+    public boolean buscar(Ubicacion pro) {
         PreparedStatement ps;
         ResultSet rs;
         Connection con = getConnection();
-        
+
         String sql = "SELECT * FROM ubicaciones WHERE idubicaciones=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, pro.getId());
-            
-            rs= ps.executeQuery();
-            if(rs.next()){
+
+            rs = ps.executeQuery();
+            if (rs.next()) {
                 pro.setId(rs.getInt("idubicaciones"));
                 pro.setNombre(rs.getString("nombre"));
                 pro.setTelefono(rs.getString("contacto"));
                 pro.setDireccion(rs.getString("direccion"));
                 pro.setCiudad(rs.getString("ciudad"));
                 pro.setIdentificacion(rs.getString("identificacion"));
-                
+
                 return true;
             }
             System.out.println("Proveedor no encontrado");
             return false;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error al buscar el proveedor");
             System.out.println(e);
             return false;
-        }finally{
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    
+    public double getSum(int id) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT SUM(ubicacion_productos.cantidad) FROM activo LEFT JOIN ubicacion_productos ON ubicacion_productos.idproductos = activo.idproductos WHERE idubicacion=?";
+        
+        double resultado = 0;
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                
+                resultado = rs.getDouble("SUM(ubicacion_productos.cantidad)");
+            }
+            
+            return resultado;
+        } catch(SQLException e) {
+            System.out.println(e);
+            return resultado;
+        } finally {
             try{
                 con.close();
-            }catch(SQLException e){
+            }catch(SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public double getSumPeso(int id) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT SUM(activo.peso) FROM activo LEFT JOIN ubicacion_productos ON ubicacion_productos.idproductos = activo.idproductos WHERE idubicacion =?";
+        
+        double resultado = 0;
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                
+                resultado = rs.getDouble("SUM(activo.peso)");
+            }
+            
+            return resultado;
+        } catch(SQLException e) {
+            System.out.println(e);
+            return resultado;
+        } finally {
+            try{
+                con.close();
+            }catch(SQLException e) {
                 System.out.println(e);
             }
         }

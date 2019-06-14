@@ -21,13 +21,14 @@ import vista.FrmActivos;
  * @author Administrator
  */
 public final class CtlrProducto implements ActionListener {
+
     private final Producto producto;
-    private final ConsultasProducto cproducto ;
-    private final FrmActivos vproducto ;
+    private final ConsultasProducto cproducto;
+    private final FrmActivos vproducto;
     private final DefaultTableModel modelo;
     private final DefaultComboBoxModel cbxmodelo;
     private final CtlrBodega cbodega;
-    
+
     public CtlrProducto(Producto producto, ConsultasProducto cproducto, FrmActivos vproducto, CtlrBodega cbodega) {
         this.producto = producto;
         this.cproducto = cproducto;
@@ -43,12 +44,12 @@ public final class CtlrProducto implements ActionListener {
         this.modelo.addColumn("Cantidad");
         llenarComboBox();
         llenarTabla();
-        this.vproducto.jtbActivos.addMouseListener(new java.awt.event.MouseAdapter(){
+        this.vproducto.jtbActivos.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
-            public void mouseClicked(java.awt.event.MouseEvent evt){
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
                 getSelectedProducto();
             }
-        });        
+        });
         this.vproducto.btnEliminar.addActionListener(this);
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
@@ -57,8 +58,8 @@ public final class CtlrProducto implements ActionListener {
         this.vproducto.cbxMarca.setModel(cbxmodelo);
         this.vproducto.txtIDActivo.setVisible(false);
     }
-    
-    public void llenarTabla(){
+
+    public void llenarTabla() {
         limpiarTabla();
         ArrayList<Producto> productos = cproducto.getProductos();
         Object[] array = new Object[6];
@@ -72,56 +73,57 @@ public final class CtlrProducto implements ActionListener {
             modelo.addRow(array);
         }
     }
-    
-    public void limpiarTabla(){
+
+    public void limpiarTabla() {
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
             modelo.removeRow(size - 1 - i);
         }
     }
-    
-    public void getSelectedProducto(){
+
+    public void getSelectedProducto() {
         int fila = vproducto.jtbActivos.getSelectedRow();
-        String codigo = vproducto.jtbActivos.getValueAt(fila,0).toString();
-        String[] rs =cproducto.buscarElemento(codigo);
+        String codigo = vproducto.jtbActivos.getValueAt(fila, 0).toString();
+        String[] rs = cproducto.buscarElemento(codigo);
         vproducto.txtIDActivo.setText(rs[0]);
         vproducto.txtCodigoActivos.setText(rs[1]);
         vproducto.txtNombre.setText(rs[2]);
         vproducto.txtDescripcion.setText(rs[3]);
         vproducto.txtPeso.setText(rs[4]);
-        vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(Integer.parseInt(rs[5]),cproducto.getNombreMarca(Integer.parseInt(rs[5]))));
+        vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(Integer.parseInt(rs[5]), cproducto.getNombreMarca(Integer.parseInt(rs[5]))));
         vproducto.txtCantidad.setText(rs[6]);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vproducto.btnBuscar) {
             producto.setCodigo(vproducto.txtCodigoActivos.getText());
             if (cproducto.buscar(producto)) {
-                vproducto.txtIDActivo.setText(producto.getId()+"");
+                vproducto.txtIDActivo.setText(producto.getId() + "");
                 vproducto.txtCodigoActivos.setText(producto.getCodigo());
                 vproducto.txtNombre.setText(producto.getNombre());
                 vproducto.txtDescripcion.setText(producto.getDescripcion());
-                vproducto.txtPeso.setText(producto.getPeso()+"");
-                vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(producto.getMarca(),cproducto.getNombreMarca(producto.getMarca())));
-                vproducto.txtCantidad.setText(producto.getStock()+"");
-            }else{
+                vproducto.txtPeso.setText(producto.getPeso() + "");
+                vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(producto.getMarca(), cproducto.getNombreMarca(producto.getMarca())));
+                vproducto.txtCantidad.setText(producto.getStock() + "");
+            } else {
                 JOptionPane.showMessageDialog(null, "No se encontro registro");
                 limpiar();
             }
-            
-        }else{
-            if(e.getSource() == vproducto.btnEliminar){
+
+        } else {
+            if (e.getSource() == vproducto.btnEliminar) {
                 producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
                 if (cproducto.eliminar(producto)) {
                     JOptionPane.showMessageDialog(null, "Producto eliminado");
                     limpiar();
                     llenarTabla();
-                }else{
+                } else {
                     JOptionPane.showMessageDialog(null, "Error al eliminar");
                     limpiar();
                     llenarTabla();
                 }
-            }else{
+            } else {
                 if (e.getSource() == vproducto.btnInsertar) {
                     producto.setCodigo(vproducto.txtCodigoActivos.getText());
                     producto.setNombre(vproducto.txtNombre.getText());
@@ -136,13 +138,13 @@ public final class CtlrProducto implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Producto insertado");
                         limpiar();
                         llenarTabla();
-                    }else{
+                    } else {
                         JOptionPane.showMessageDialog(null, "Error al insertar producto");
-                        limpiar ();
+                        limpiar();
                         llenarTabla();
                     }
-                    
-                }else{
+
+                } else {
                     if (e.getSource() == vproducto.btnModificar) {
                         producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
                         producto.setCodigo(vproducto.txtCodigoActivos.getText());
@@ -152,12 +154,12 @@ public final class CtlrProducto implements ActionListener {
                         ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
                         producto.setMarca(marca.getId());
                         producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
-                        
-                        if (cproducto.modificar(producto)) {    
+
+                        if (cproducto.modificar(producto)) {
                             JOptionPane.showMessageDialog(null, "Producto modificado");
                             limpiar();
                             llenarTabla();
-                        }else{
+                        } else {
                             JOptionPane.showMessageDialog(null, "Error al modificar producto");
                             limpiar();
                             llenarTabla();
@@ -165,11 +167,11 @@ public final class CtlrProducto implements ActionListener {
                     }
                 }
             }
-            
+
         }
     }
-    
-    public void limpiar(){
+
+    public void limpiar() {
         vproducto.txtIDActivo.setText("");
         vproducto.txtCodigoActivos.setText("");
         vproducto.txtNombre.setText("");
@@ -185,5 +187,5 @@ public final class CtlrProducto implements ActionListener {
             cbxmodelo.addElement(marcas.get(i));
         }
     }
-    
+
 }
