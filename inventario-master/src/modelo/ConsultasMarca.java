@@ -16,7 +16,10 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasMarca extends Conexion {
-
+    
+    public Connection getConexion(){
+        return getConnection();
+    }
     public boolean insertar(Marca marca) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -221,38 +224,68 @@ public class ConsultasMarca extends Conexion {
             }
         }
     }
-    
-    public double getSum(int id, String column) {
+
+    public double getSumPeso(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
-        String sql = "SELECT SUM("+column+") FROM activo WHERE idmarca=?";
-        
+
+        String sql = "SELECT peso, cantidad FROM activo WHERE idmarca=?";
+
         double resultado = 0;
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
-            if (rs.next()) {
-                
-                resultado = rs.getDouble("SUM("+column+")");
+
+            while (rs.next()) {
+                resultado = resultado + (rs.getDouble("peso") * rs.getInt("cantidad"));
             }
-            
+
             return resultado;
-        } catch(SQLException e) {
-            System.out.println("");
+        } catch (SQLException e) {
+            System.out.println(e);
             return resultado;
         } finally {
-            try{
+            try {
                 con.close();
-            }catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    
-    
+
+    public double getSum(int id, String column) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT SUM(" + column + ") FROM activo WHERE idmarca=?";
+
+        double resultado = 0;
+
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+
+                resultado = rs.getDouble("SUM(" + column + ")");
+            }
+
+            return resultado;
+        } catch (SQLException e) {
+            System.out.println("");
+            return resultado;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
 }

@@ -9,10 +9,20 @@ import java.awt.event.ActionEvent;
 import modelo.ConsultasUbicacion;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
 import modelo.Ubicacion;
-import modelo.UbicacionProducto;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import vista.FrmActivos;
 
 /**
@@ -39,7 +49,9 @@ public final class CtlrUbicacion implements ActionListener {
         this.modelo.addColumn("Ciudad");
         this.modelo.addColumn("Identificación");
         this.modeloc = new DefaultTableModel();
-        this.modeloc.addColumn("ID");
+        this.modeloc.addColumn("Código");
+        this.modeloc.addColumn("Nombre");
+        this.modeloc.addColumn("Peso");
         this.modeloc.addColumn("Cantidad");
         llenarTabla();
         this.vproveedor.jtbProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -50,25 +62,27 @@ public final class CtlrUbicacion implements ActionListener {
                 changeLabels();
             }
         });
+        this.vproveedor.btnReporteCliente.addActionListener(this);
         this.vproveedor.btnBuscarProveedor.addActionListener(this);
         this.vproveedor.btnInsertarProveedor.addActionListener(this);
         this.vproveedor.btnEliminarProveedor.addActionListener(this);
         this.vproveedor.btnModificarProveedor.addActionListener(this);
         this.vproveedor.jtbProveedores.setModel(modelo);
+        this.vproveedor.jtbProveedores.setDefaultEditor(Object.class, null);
         this.vproveedor.jtbUbicacionProducto.setModel(modeloc);
+        this.vproveedor.jtbUbicacionProducto.setDefaultEditor(Object.class, null);
     }
+
     public void changeLabels() {
-        vproveedor.lblCantidadCliente.setText(cproveedor.getSum(proveedor.getId())+"");
-        vproveedor.lblPesoCliente.setText(cproveedor.getSumPeso(proveedor.getId())+"");
+        vproveedor.lblCantidadCliente.setText(cproveedor.getSum(proveedor.getId()) + "");
+        vproveedor.lblPesoCliente.setText(cproveedor.getSumPeso(proveedor.getId()) + "");
     }
+
     public void llenarTablaProductos() {
         limpiarTablaProductos();
-        ArrayList<UbicacionProducto> productos = cproveedor.buscarProductos(proveedor);
-        Object[] array = new Object[2];
+        ArrayList<Object[]> productos = cproveedor.buscarProductos(proveedor);
         for (int i = 0; i < productos.size(); i++) {
-            array[0] = productos.get(i).getIdproducto();
-            array[1] = productos.get(i).getCantidad();
-            modeloc.addRow(array);
+            modeloc.addRow(productos.get(i));
         }
     }
 
@@ -175,6 +189,30 @@ public final class CtlrUbicacion implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Error al modificar cliente");
                             limpiar();
                             llenarTabla();
+                        }
+                    }else{
+                        if (e.getSource() == vproveedor.btnReporteCliente) {
+                            try{
+                                JasperReport reporte = null;
+                                String path = "src\\reporte\\ReporteCliente.jasper";
+                                
+                                Map parametros = new HashMap();
+                                int fila = vproveedor.jtbProveedores.getSelectedRow();
+                                
+                                parametros.put("id", vproveedor.jtbProveedores.getValueAt(fila, 0) );
+                                
+                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+                                
+                                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cproveedor.getConexion());
+                                
+                                JasperViewer view = new JasperViewer (jprint, false);
+                                
+                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                                
+                                view.setVisible(true);
+                            } catch (JRException ex) {
+                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }

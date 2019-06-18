@@ -197,7 +197,7 @@ public class FrmEntrada extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAceptarEntrada;
     public javax.swing.JButton btnRestarEntrada;

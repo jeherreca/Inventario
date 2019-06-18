@@ -16,7 +16,9 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasBodega extends Conexion {
-
+    public Connection getConexion(){
+        return getConnection();
+    }
     public boolean insertar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -70,19 +72,19 @@ public class ConsultasBodega extends Conexion {
         }
     }
 
-    public ArrayList<Bodega> getBodegas() {
+    public ArrayList<Object[]> getBodegas() {
         PreparedStatement ps;
         Connection con = getConnection();
-        String sql = "SELECT * FROM bodega";
+        String sql = "SELECT activo.codigo, activo.nombre, activo.descripcion, bodega.cantidad FROM activo INNER JOIN bodega ON activo.idproductos = bodega.idproducto";
         ResultSet rs;
-        ArrayList<Bodega> productos = new ArrayList<>();
+        ArrayList<Object[]> productos = new ArrayList<>();
 
         try {
             ps = con.prepareStatement(sql);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                Bodega bodega = new Bodega(rs.getInt("idproducto"), rs.getInt("cantidad"));
+                Object[] bodega = {rs.getString("codigo"), rs.getString("nombre"), rs.getString("descripcion"), rs.getInt("cantidad")};
                 productos.add(bodega);
             }
 

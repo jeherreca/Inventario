@@ -9,11 +9,22 @@ import inventario.ComboBoxHelper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasProducto;
 import modelo.Producto;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import vista.FrmActivos;
 
 /**
@@ -54,7 +65,9 @@ public final class CtlrProducto implements ActionListener {
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
         this.vproducto.btnModificar.addActionListener(this);
+        this.vproducto.btnReporteProducto.addActionListener(this);
         this.vproducto.jtbActivos.setModel(modelo);
+        this.vproducto.jtbActivos.setDefaultEditor(Object.class, null);
         this.vproducto.cbxMarca.setModel(cbxmodelo);
         this.vproducto.txtIDActivo.setVisible(false);
     }
@@ -68,7 +81,7 @@ public final class CtlrProducto implements ActionListener {
             array[1] = productos.get(i).getNombre();
             array[2] = productos.get(i).getDescripcion();
             array[3] = productos.get(i).getPeso();
-            array[4] = productos.get(i).getMarca();
+            array[4] = cproducto.getNombreMarca(productos.get(i).getMarca());
             array[5] = productos.get(i).getStock();
             modelo.addRow(array);
         }
@@ -163,6 +176,26 @@ public final class CtlrProducto implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Error al modificar producto");
                             limpiar();
                             llenarTabla();
+                        }
+                    } else {
+                        if (e.getSource() == vproducto.btnReporteProducto) {
+                            try{
+                                JasperReport reporte = null;
+                                String path = "src\\reporte\\ReporteActivos.jasper";
+                                                                
+                                
+                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+                                
+                                JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cproducto.getConexion());
+                                
+                                JasperViewer view = new JasperViewer (jprint, false);
+                                
+                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                                
+                                view.setVisible(true);
+                            } catch (JRException ex) {
+                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }

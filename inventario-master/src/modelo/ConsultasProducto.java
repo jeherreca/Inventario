@@ -17,7 +17,9 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasProducto extends Conexion {
-
+    public Connection getConexion() {
+        return getConnection();
+    }
     public ArrayList<ComboBoxHelper> getMarcas() {
         PreparedStatement ps;
         ResultSet rs;

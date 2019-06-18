@@ -16,12 +16,14 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasUbicacion extends Conexion {
-
-    public ArrayList<UbicacionProducto> buscarProductos(Ubicacion ubi) {
+    public Connection getConexion(){
+        return getConnection();
+    }
+    public ArrayList<Object[]> buscarProductos(Ubicacion ubi) {
         PreparedStatement ps;
         Connection con = getConnection();
-        ArrayList<UbicacionProducto> productos = new ArrayList<>();
-        String sql = "SELECT * FROM ubicacion_productos WHERE idubicacion=?";
+        ArrayList<Object[]> productos = new ArrayList<>();
+        String sql = "SELECT activo.codigo, activo.nombre, activo.peso, ubicacion_productos.cantidad FROM activo INNER JOIN ubicacion_productos ON activo.idproductos = ubicacion_productos.idproductos WHERE idubicacion=?";
         ResultSet rs;
 
         try {
@@ -31,7 +33,7 @@ public class ConsultasUbicacion extends Conexion {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                UbicacionProducto pro = new UbicacionProducto(rs.getInt("idubicacion"), rs.getInt("idproductos"), rs.getInt("cantidad"));
+                Object[] pro = {rs.getString("codigo"), rs.getString("nombre"), rs.getDouble("peso"), rs.getInt("cantidad")};
                 productos.add(pro);
             }
             return productos;
@@ -234,65 +236,66 @@ public class ConsultasUbicacion extends Conexion {
             }
         }
     }
-    
+
     public double getSum(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
+
         String sql = "SELECT SUM(ubicacion_productos.cantidad) FROM activo LEFT JOIN ubicacion_productos ON ubicacion_productos.idproductos = activo.idproductos WHERE idubicacion=?";
-        
+
         double resultado = 0;
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
+
             if (rs.next()) {
-                
+
                 resultado = rs.getDouble("SUM(ubicacion_productos.cantidad)");
             }
-            
+
             return resultado;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
             return resultado;
         } finally {
-            try{
+            try {
                 con.close();
-            }catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
+
     public double getSumPeso(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
-        String sql = "SELECT SUM(activo.peso) FROM activo LEFT JOIN ubicacion_productos ON ubicacion_productos.idproductos = activo.idproductos WHERE idubicacion =?";
-        
+
+        String sql = "SELECT activo.peso, ubicacion_productos.cantidad FROM activo LEFT JOIN ubicacion_productos ON ubicacion_productos.idproductos = activo.idproductos WHERE idubicacion =?";
+
         double resultado = 0;
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
             rs = ps.executeQuery();
-            
-            if (rs.next()) {
-                
-                resultado = rs.getDouble("SUM(activo.peso)");
+
+            while (rs.next()) {
+
+                resultado = resultado + (rs.getDouble("peso") * rs.getInt("cantidad"));
             }
-            
+
             return resultado;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
             return resultado;
         } finally {
-            try{
+            try {
                 con.close();
-            }catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }

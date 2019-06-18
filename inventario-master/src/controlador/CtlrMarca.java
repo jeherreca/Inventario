@@ -8,11 +8,22 @@ package controlador;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasMarca;
 import modelo.Marca;
 import modelo.Producto;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import vista.FrmActivos;
 
 /**
@@ -54,8 +65,11 @@ public final class CtlrMarca implements ActionListener {
         this.vmarca.btnInsertarMarca.addActionListener(this);
         this.vmarca.btnModificarMarca.addActionListener(this);
         this.vmarca.btnBuscarMarca.addActionListener(this);
+        this.vmarca.btnReporteMarca.addActionListener(this);
         this.vmarca.jtbMarca.setModel(modelomarca);
+        this.vmarca.jtbMarca.setDefaultEditor(Object.class, null);
         this.vmarca.jtbMarcaProducto.setModel(modelomp);
+        this.vmarca.jtbMarcaProducto.setDefaultEditor(Object.class, null);
     }
 
     public void limpiarTabla() {
@@ -84,12 +98,14 @@ public final class CtlrMarca implements ActionListener {
             modelomp.addRow(array);
         }
     }
-    public void changeLabels(){
+
+    public void changeLabels() {
         int fila = vmarca.jtbMarca.getSelectedRow();
         String id = vmarca.jtbMarca.getValueAt(fila, 0).toString();
-        vmarca.lblPesoMarca.setText(cmarca.getSum(Integer.parseInt(id),"peso" )+"");
-        vmarca.lblCantidadMarca.setText(cmarca.getSum(Integer.parseInt(id),"cantidad" )+"");
+        vmarca.lblPesoMarca.setText(cmarca.getSumPeso(Integer.parseInt(id)) + "");
+        vmarca.lblCantidadMarca.setText(cmarca.getSum(Integer.parseInt(id), "cantidad") + "");
     }
+
     public void llenarTabla() {
         limpiarTabla();
         ArrayList<Marca> marcas = cmarca.getMarcas();
@@ -168,6 +184,30 @@ public final class CtlrMarca implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Error al modificar marca");
                             limpiar();
                             llenarTabla();
+                        }
+                    } else {
+                        if (e.getSource() == vmarca.btnReporteMarca ) {
+                            try{
+                                JasperReport reporte = null;
+                                String path = "src\\reporte\\ReporteMarca.jasper";
+                                
+                                Map parametros = new HashMap();
+                                int fila = vmarca.jtbMarca.getSelectedRow();
+                                
+                                parametros.put("id", vmarca.jtbMarca.getValueAt(fila, 0) );
+                                
+                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+                                
+                                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmarca.getConexion());
+                                
+                                JasperViewer view = new JasperViewer (jprint, false);
+                                
+                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                                
+                                view.setVisible(true);
+                            } catch (JRException ex) {
+                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }

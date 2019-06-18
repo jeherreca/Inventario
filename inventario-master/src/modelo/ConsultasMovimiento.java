@@ -17,42 +17,76 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasMovimiento extends Conexion {
-    public boolean verificar (int id, int idcliente){
+    public Connection getConexion(){
+        return getConnection();
+    }
+    public String getUbicacion(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
-        
-        String sql = "SELECT * FROM ubicacion_productos WHERE idproductos=? AND idubicacion=?";
-        boolean r = false;
-        try{
+
+        String sql = "SELECT nombre FROM ubicaciones WHERE idubicaciones=?";
+
+        String nombre = "";
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, id);
-            ps.setInt(2, idcliente);
             rs = ps.executeQuery();
-            
+
             if (rs.next()) {
-                r = true;
+                nombre = rs.getString("nombre");
             }
-            return r;
-        }catch(SQLException e){
+
+            return nombre;
+        } catch (SQLException e) {
             System.out.println(e);
-            return r;
-        }finally{
-            try{
+            return nombre;
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
-    public ArrayList<MovimientoProducto> getSalidasProd(String codigo) {
+
+    public boolean verificar(int id, int idcliente) {
         PreparedStatement ps;
         Connection con = getConnection();
         ResultSet rs;
 
-        String sql = "SELECT * FROM movimiento_productos WHERE idmovimiento=?";
+        String sql = "SELECT * FROM ubicacion_productos WHERE idproductos=? AND idubicacion=?";
+        boolean r = false;
+        try {
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.setInt(2, idcliente);
+            rs = ps.executeQuery();
 
-        ArrayList<MovimientoProducto> salprod = new ArrayList<>();
+            if (rs.next()) {
+                r = true;
+            }
+            return r;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return r;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public ArrayList<Object[]> getSalidasProd(String codigo) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+
+        String sql = "SELECT activo.codigo, activo.nombre, movimiento_productos.cantidad FROM inventario.activo INNER JOIN inventario.movimiento_productos ON activo.idproductos = movimiento_productos.idproducto WHERE movimiento_productos.idmovimiento=?";
+
+        ArrayList<Object[]> salprod = new ArrayList<>();
 
         try {
             ps = con.prepareStatement(sql);
@@ -61,11 +95,7 @@ public class ConsultasMovimiento extends Conexion {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                MovimientoProducto movprod = new MovimientoProducto();
-                movprod.setActivo(rs.getInt("idproducto"));
-                movprod.setCantidad(rs.getInt("cantidad"));
-                movprod.setMovimiento(rs.getInt("idmovimiento"));
-
+                Object[] movprod = {rs.getString("codigo"), rs.getString("nombre"), rs.getInt("cantidad")};
                 salprod.add(movprod);
             }
 
@@ -114,6 +144,7 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
+
     public boolean sumarUbicacionProducto(int cantidad, int id, int idcliente) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -130,7 +161,7 @@ public class ConsultasMovimiento extends Conexion {
 
             return true;
         } catch (SQLException e) {
-            System.out.println("Error al sumar ubicacion producto: "+e);
+            System.out.println("Error al sumar ubicacion producto: " + e);
             return false;
         } finally {
             try {
@@ -157,7 +188,7 @@ public class ConsultasMovimiento extends Conexion {
 
             return true;
         } catch (SQLException e) {
-            System.out.println("Error al insertar ubicacion_producto: "+e);
+            System.out.println("Error al insertar ubicacion_producto: " + e);
             return false;
         } finally {
             try {
@@ -197,30 +228,32 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
-    public boolean sumarBodega(int cantidad, int id){
+
+    public boolean sumarBodega(int cantidad, int id) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "UPDATE bodega SET cantidad = cantidad+? WHERE idproducto=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, cantidad);
             ps.setInt(2, id);
-            
+
             ps.execute();
             return true;
-        } catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
             return false;
         } finally {
             try {
                 con.close();
-            } catch(SQLException e) {
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
+
     public ArrayList<Movimiento> getMovimientos(String tipo) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -350,33 +383,35 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
-    public boolean restarCliente(int cantidad, int idcliente, int id){
+
+    public boolean restarCliente(int cantidad, int idcliente, int id) {
         PreparedStatement ps;
         Connection con = getConnection();
-        
+
         String sql = "UPDATE ubicacion_productos SET cantidad=cantidad-? WHERE idproductos=? AND idubicacion=?";
-        
-        try{
+
+        try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, cantidad);
             ps.setInt(2, id);
             ps.setInt(3, idcliente);
-            
+
             ps.execute();
-            
+
             System.out.println("Ubicacion modificada");
             return true;
-        }catch(SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
             return false;
-        }finally{
-            try{
+        } finally {
+            try {
                 con.close();
-            }catch(SQLException e){
+            } catch (SQLException e) {
                 System.out.println(e);
             }
         }
     }
+
     public boolean restarBodega(int cantidad, int id) {
         PreparedStatement ps;
         Connection con = getConnection();

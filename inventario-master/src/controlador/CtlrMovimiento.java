@@ -12,13 +12,24 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasMovimiento;
 import modelo.Movimiento;
 import modelo.MovimientoProducto;
 import modelo.Producto;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 import vista.FrmActivos;
 import vista.FrmEntrada;
 import vista.FrmSalida;
@@ -75,9 +86,11 @@ public final class CtlrMovimiento implements ActionListener {
         this.modelotbsa.addColumn("Fecha");
         this.modelotbsa.addColumn("Ubicación");
         this.modelotbsa.addColumn("Observaciones");
-        this.modelotbpen.addColumn("ID");
+        this.modelotbpen.addColumn("Código");
+        this.modelotbpen.addColumn("Nombre");
         this.modelotbpen.addColumn("Cantidad");
-        this.modelotbpsa.addColumn("ID");
+        this.modelotbpsa.addColumn("Código");
+        this.modelotbpsa.addColumn("Nombre");
         this.modelotbpsa.addColumn("Cantidad");
         this.modelol1s.addColumn("Código");
         this.modelol1s.addColumn("Nombre");
@@ -125,16 +138,25 @@ public final class CtlrMovimiento implements ActionListener {
         this.vsalida.btnSumarSalida.addActionListener(this);
         this.ventrada.btnSumarEntrada.addActionListener(this);
         this.ventrada.btnRestarEntrada.addActionListener(this);
+        this.vmovimiento.btnReporteEntrada.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
         this.vsalida.jtbP1Salida.setModel(modelol1s);
+        this.vsalida.jtbP1Salida.setDefaultEditor(Object.class, null);
         this.vsalida.jtbP2Salida.setModel(modelol2s);
+        this.vsalida.jtbP2Salida.setDefaultEditor(Object.class, null);
         this.vmovimiento.jtbEntradas.setModel(modelotben);
+        this.vmovimiento.jtbEntradas.setDefaultEditor(Object.class, null);
         this.vmovimiento.jtbProEntradas.setModel(modelotbpen);
+        this.vmovimiento.jtbProEntradas.setDefaultEditor(Object.class, null);
         this.vmovimiento.jtbSalida.setModel(modelotbsa);
+        this.vmovimiento.jtbSalida.setDefaultEditor(Object.class, null);
         this.vmovimiento.jtbProSalidas.setModel(modelotbpsa);
+        this.vmovimiento.jtbProSalidas.setDefaultEditor(Object.class, null);
         this.ventrada.lstCliente.setModel(modeloclientes);
         this.ventrada.jtbP1Entrada.setModel(modelol1e);
+        this.ventrada.jtbP1Entrada.setDefaultEditor(Object.class, null);
         this.ventrada.jtbP2Entrada.setModel(modelol2e);
+        this.ventrada.jtbP2Entrada.setDefaultEditor(Object.class, null);
     }
 
     public void llenarTablaCliente() {
@@ -186,27 +208,22 @@ public final class CtlrMovimiento implements ActionListener {
     public void llenarTablaSalidasProd() {
         limpiarSalidasProd(modelotbpsa);
         String codigo = vmovimiento.jtbSalida.getValueAt(vmovimiento.jtbSalida.getSelectedRow(), 0).toString();
-        ArrayList<MovimientoProducto> movprods = cmovimiento.getSalidasProd(codigo);
-        Object[] array = new Object[2];
+        ArrayList<Object[]> movprods = cmovimiento.getSalidasProd(codigo);
         for (int i = 0; i < movprods.size(); i++) {
-            array[0] = movprods.get(i).getActivo();
-            array[1] = movprods.get(i).getCantidad();
 
-            modelotbpsa.addRow(array);
+            modelotbpsa.addRow(movprods.get(i));
         }
     }
+
     public void llenarTablaEntradasProd() {
         limpiarSalidasProd(modelotbpen);
         String codigo = vmovimiento.jtbEntradas.getValueAt(vmovimiento.jtbEntradas.getSelectedRow(), 0).toString();
-        ArrayList<MovimientoProducto> movprods = cmovimiento.getSalidasProd(codigo);
-        Object[] array = new Object[2];
+        ArrayList<Object[]> movprods = cmovimiento.getSalidasProd(codigo);
         for (int i = 0; i < movprods.size(); i++) {
-            array[0] = movprods.get(i).getActivo();
-            array[1] = movprods.get(i).getCantidad();
-
-            modelotbpen.addRow(array);
+            modelotbpen.addRow(movprods.get(i));
         }
     }
+
     public void agregarCliente() {
         int index = vsalida.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modelocliente.getElementAt(index);
@@ -231,13 +248,13 @@ public final class CtlrMovimiento implements ActionListener {
         for (int i = 0; i < prods.size(); i++) {
             array[0] = prods.get(i).getCodigo();
             array[1] = prods.get(i).getFecha();
-            array[2] = prods.get(i).getUbicacion();
+            array[2] = cmovimiento.getUbicacion(prods.get(i).getUbicacion());
             array[3] = prods.get(i).getObservaciones();
             modelotbsa.addRow(array);
         }
     }
-    
-        public void llenarTablaEntradas() {
+
+    public void llenarTablaEntradas() {
         limpiarSalidas(modelotben);
         ArrayList<Movimiento> prods = cmovimiento.getMovimientos("entrada");
         Object[] array = new Object[4];
@@ -245,7 +262,7 @@ public final class CtlrMovimiento implements ActionListener {
         for (int i = 0; i < prods.size(); i++) {
             array[0] = prods.get(i).getCodigo();
             array[1] = prods.get(i).getFecha();
-            array[2] = prods.get(i).getUbicacion();
+            array[2] = cmovimiento.getUbicacion(prods.get(i).getUbicacion());
             array[3] = prods.get(i).getObservaciones();
             modelotben.addRow(array);
         }
@@ -321,28 +338,30 @@ public final class CtlrMovimiento implements ActionListener {
                             movimiento.setTipo("salida");
                             movimiento.setObservaciones(vsalida.txtObservacionesSalida.getText());
                             movimiento.setUbicacion(idcliente1);
-                            cmovimiento.insertar(movimiento);
-                            int idmov = cmovimiento.getIDByCode(vsalida.txtCodigoSalida.getText());
-                            for (int i = 0; i < modelol2s.getRowCount(); i++) {
-                                MovimientoProducto movprod = new MovimientoProducto();
-                                movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
-                                movprod.setMovimiento(idmov);
-                                movprod.setCantidad(Integer.parseInt(modelol2s.getValueAt(i, 2).toString()));
-                                int cantidad = movprod.getCantidad();
-                                cmovimiento.restarBodega(cantidad, cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
-                                cmovimiento.insertarMovimientoProducto(movprod);
-                                if (cmovimiento.verificar(movprod.getActivo(), idcliente1)) {
-                                    cmovimiento.sumarUbicacionProducto(cantidad, movprod.getActivo(), idcliente1);
-                                } else {
-                                    cmovimiento.insertarUbicacionProducto(idcliente1, cantidad, movprod.getActivo());
+                            if(cmovimiento.insertar(movimiento)){
+                                int idmov = cmovimiento.getIDByCode(vsalida.txtCodigoSalida.getText());
+                                for (int i = 0; i < modelol2s.getRowCount(); i++) {
+                                    MovimientoProducto movprod = new MovimientoProducto();
+                                    movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
+                                    movprod.setMovimiento(idmov);
+                                    movprod.setCantidad(Integer.parseInt(modelol2s.getValueAt(i, 2).toString()));
+                                    int cantidad = movprod.getCantidad();
+                                    cmovimiento.restarBodega(cantidad, cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
+                                    cmovimiento.insertarMovimientoProducto(movprod);
+                                    if (cmovimiento.verificar(movprod.getActivo(), idcliente1)) {
+                                        cmovimiento.sumarUbicacionProducto(cantidad, movprod.getActivo(), idcliente1);
+                                    } else {
+                                        cmovimiento.insertarUbicacionProducto(idcliente1, cantidad, movprod.getActivo());
+                                    }
                                 }
+                                ctlrbodega.llenarTabla();
+                                llenarTablaSalidas();
+                                llenarTablaBodega();
+                                limpiarProdSalidas(modelol2s);
+                                JOptionPane.showMessageDialog(null, "Salida agregada");
+                            }else{
+                                JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
                             }
-                            ctlrbodega.llenarTabla();
-                            llenarTablaSalidas();
-                            llenarTablaBodega();
-                            limpiarProdSalidas(modelol2s);
-                            JOptionPane.showMessageDialog(null, "Salida agregada");
-
                         } catch (ParseException ex) {
                             System.out.println(ex);
                         }
@@ -378,7 +397,7 @@ public final class CtlrMovimiento implements ActionListener {
                                 }
                             } else {
                                 if (e.getSource() == ventrada.btnAceptarEntrada) {
-                                    try{
+                                    try {
                                         movimiento.setCodigo(ventrada.txtCodigoEntrada.getText());
                                         String fecha = ventrada.txtFechaEntrada.getText();
                                         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
@@ -402,13 +421,37 @@ public final class CtlrMovimiento implements ActionListener {
                                         limpiarClientes();
                                         limpiarProdSalidas(modelol2e);
                                         JOptionPane.showMessageDialog(null, "Entrada agregada");
-                                    }catch(ParseException ex) {
+                                    } catch (ParseException ex) {
                                         System.out.println(ex);
                                     }
                                 } else {
                                     if (e.getSource() == ventrada.btnRestarEntrada) {
                                         int row = ventrada.jtbP2Entrada.getSelectedRow();
                                         modelol2e.removeRow(row);
+                                    } else {
+                                        if (e.getSource() == vmovimiento.btnReporteEntrada) {
+                                            try{
+                                                JasperReport reporte = null;
+                                                String path = "src\\reporte\\ReporteEntradas.jasper";
+
+                                                Map parametros = new HashMap();
+                                                int fila = vmovimiento.jtbEntradas.getSelectedRow();
+
+                                                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0) );
+
+                                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+
+                                                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
+
+                                                JasperViewer view = new JasperViewer (jprint, false);
+
+                                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+                                                view.setVisible(true);
+                                            } catch (JRException ex) {
+                                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
                                     }
                                 }
                             }
