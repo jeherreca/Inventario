@@ -31,7 +31,7 @@ import vista.FrmSalida;
 public class Inventario {
 
     public static void main(String[] args) {
-
+        
         Producto producto = new Producto();
         ConsultasProducto cproducto = new ConsultasProducto();
         FrmActivos vproducto = new FrmActivos();
@@ -56,5 +56,6 @@ public class Inventario {
         CtlrUbicacion ctlrubic = new CtlrUbicacion(ubicacion, cubicacion, vproducto);
         CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida, cbodega);
         vproducto.setVisible(true);
+        
     }
 }

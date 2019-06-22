@@ -43,7 +43,6 @@ public final class CtlrMovimiento implements ActionListener {
     private final Movimiento movimiento;
     private int idcliente1;
     private int idcliente2;
-    private final ArrayList<MovimientoProducto> productos;
     private final ConsultasMovimiento cmovimiento;
     private final FrmActivos vmovimiento;
     private final FrmEntrada ventrada;
@@ -62,7 +61,6 @@ public final class CtlrMovimiento implements ActionListener {
 
     public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida, CtlrBodega ctlrbodega) {
         this.movimiento = movimiento;
-        this.productos = new ArrayList<>();
         this.cmovimiento = cmovimiento;
         this.vmovimiento = vmovimiento;
         this.ventrada = ventrada;
@@ -139,6 +137,7 @@ public final class CtlrMovimiento implements ActionListener {
         this.ventrada.btnSumarEntrada.addActionListener(this);
         this.ventrada.btnRestarEntrada.addActionListener(this);
         this.vmovimiento.btnReporteEntrada.addActionListener(this);
+        this.vmovimiento.btnReporteSalida.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
         this.vsalida.jtbP1Salida.setModel(modelol1s);
         this.vsalida.jtbP1Salida.setDefaultEditor(Object.class, null);
@@ -201,7 +200,7 @@ public final class CtlrMovimiento implements ActionListener {
     public void limpiarSalidas(DefaultTableModel modelo) {
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
-            modelotbsa.removeRow(size - 1 - i);
+            modelo.removeRow(size - 1 - i);
         }
     }
 
@@ -338,7 +337,7 @@ public final class CtlrMovimiento implements ActionListener {
                             movimiento.setTipo("salida");
                             movimiento.setObservaciones(vsalida.txtObservacionesSalida.getText());
                             movimiento.setUbicacion(idcliente1);
-                            if(cmovimiento.insertar(movimiento)){
+                            if (cmovimiento.insertar(movimiento)) {
                                 int idmov = cmovimiento.getIDByCode(vsalida.txtCodigoSalida.getText());
                                 for (int i = 0; i < modelol2s.getRowCount(); i++) {
                                     MovimientoProducto movprod = new MovimientoProducto();
@@ -359,7 +358,7 @@ public final class CtlrMovimiento implements ActionListener {
                                 llenarTablaBodega();
                                 limpiarProdSalidas(modelol2s);
                                 JOptionPane.showMessageDialog(null, "Salida agregada");
-                            }else{
+                            } else {
                                 JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
                             }
                         } catch (ParseException ex) {
@@ -430,26 +429,50 @@ public final class CtlrMovimiento implements ActionListener {
                                         modelol2e.removeRow(row);
                                     } else {
                                         if (e.getSource() == vmovimiento.btnReporteEntrada) {
-                                            try{
+                                            try {
                                                 JasperReport reporte = null;
                                                 String path = "src\\reporte\\ReporteEntradas.jasper";
 
                                                 Map parametros = new HashMap();
                                                 int fila = vmovimiento.jtbEntradas.getSelectedRow();
 
-                                                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0) );
+                                                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0));
 
                                                 reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
 
                                                 JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
 
-                                                JasperViewer view = new JasperViewer (jprint, false);
+                                                JasperViewer view = new JasperViewer(jprint, false);
 
                                                 view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
                                                 view.setVisible(true);
                                             } catch (JRException ex) {
                                                 Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        } else {
+                                            if (e.getSource() == vmovimiento.btnReporteSalida) {
+                                                try {
+                                                    JasperReport reporte = null;
+                                                    String path = "src\\reporte\\ReporteSalidas.jasper";
+
+                                                    Map parametros = new HashMap();
+                                                    int fila = vmovimiento.jtbSalida.getSelectedRow();
+
+                                                    parametros.put("codigo", vmovimiento.jtbSalida.getValueAt(fila, 0));
+
+                                                    reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+
+                                                    JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
+
+                                                    JasperViewer view = new JasperViewer(jprint, false);
+
+                                                    view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+                                                    view.setVisible(true);
+                                                } catch (JRException ex) {
+                                                    Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                                                }
                                             }
                                         }
                                     }
@@ -461,5 +484,4 @@ public final class CtlrMovimiento implements ActionListener {
             }
         }
     }
-
 }

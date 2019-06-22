@@ -8,7 +8,19 @@ package controlador;
 import java.awt.event.ActionEvent;
 import modelo.ConsultasUbicacion;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -23,6 +35,24 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import vista.FrmActivos;
 
 /**
@@ -67,6 +97,7 @@ public final class CtlrUbicacion implements ActionListener {
         this.vproveedor.btnInsertarProveedor.addActionListener(this);
         this.vproveedor.btnEliminarProveedor.addActionListener(this);
         this.vproveedor.btnModificarProveedor.addActionListener(this);
+        this.vproveedor.btnExcelCliente.addActionListener(this);
         this.vproveedor.jtbProveedores.setModel(modelo);
         this.vproveedor.jtbProveedores.setDefaultEditor(Object.class, null);
         this.vproveedor.jtbUbicacionProducto.setModel(modeloc);
@@ -212,6 +243,127 @@ public final class CtlrUbicacion implements ActionListener {
                                 view.setVisible(true);
                             } catch (JRException ex) {
                                 Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                            } 
+                        } else {
+                            if (e.getSource() == vproveedor.btnExcelCliente) {
+                                Workbook book = new XSSFWorkbook();
+                                Sheet sheet = book.createSheet("Productos");
+
+                                try {
+                                    InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg");    
+                                    byte[] bytes = IOUtils.toByteArray(is);
+                                    int imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+                                    is.close();
+
+                                    CreationHelper help = book.getCreationHelper();
+                                    Drawing draw = sheet.createDrawingPatriarch();
+
+                                    ClientAnchor anchor = help.createClientAnchor();
+                                    anchor.setCol1(0);
+                                    anchor.setRow1(0);
+                                    Picture pict = draw.createPicture(anchor, imgIndex);
+                                    pict.resize(1, 3);
+
+                                    CellStyle tituloEstilo = book.createCellStyle();
+                                    tituloEstilo.setAlignment(HorizontalAlignment.CENTER);
+                                    tituloEstilo.setVerticalAlignment(VerticalAlignment.CENTER);
+                                    Font fuenteTitulo = book.createFont();
+                                    fuenteTitulo.setFontName("Arial");
+                                    fuenteTitulo.setBold(true);
+                                    fuenteTitulo.setFontHeightInPoints((short) 14);
+                                    tituloEstilo.setFont(fuenteTitulo);
+
+
+                                    String[] cabecera = {"Código", "Nombre", "Descripción", "Cantidad"};
+
+                                    CellStyle headerStyle = book.createCellStyle();
+                                    headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
+                                    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                                    headerStyle.setBorderBottom(BorderStyle.THIN);
+                                    headerStyle.setBorderBottom(BorderStyle.THIN);
+                                    headerStyle.setBorderBottom(BorderStyle.THIN);
+
+                                    Font fuente = book.createFont();
+                                    fuente.setFontName("Arial");
+                                    fuente.setBold(true);
+                                    fuente.setFontHeightInPoints((short) 14);
+                                    fuente.setColor(IndexedColors.WHITE.getIndex());
+                                    fuente.setFontHeightInPoints((short) 12);
+                                    headerStyle.setFont(fuente);
+
+                                    Row filaEncabezados = sheet.createRow(4);
+
+                                    for (int i = 0; i < cabecera.length; i++) {
+                                        Cell celdaEncabezado = filaEncabezados.createCell(i);
+                                        celdaEncabezado.setCellStyle(headerStyle);
+                                        celdaEncabezado.setCellValue(cabecera[i]);
+                                    }
+
+                                    Connection con = cproveedor.getConexion();
+                                    PreparedStatement ps;
+                                    ResultSet rs;
+
+                                    int numFilaDatos = 5;
+
+                                    CellStyle datosEstilo = book.createCellStyle();
+                                    datosEstilo.setBorderBottom(BorderStyle.THIN);
+                                    datosEstilo.setBorderLeft(BorderStyle.THIN);
+                                    datosEstilo.setBorderTop(BorderStyle.THIN);
+                                    datosEstilo.setBorderRight(BorderStyle.THIN);
+
+                                    String sql = "SELECT activo.codigo, activo.nombre, activo.descripcion, ubicacion_productos.cantidad, ubicaciones.nombre as cliente FROM (( inventario.activo INNER JOIN inventario.ubicacion_productos ON activo.idproductos = ubicacion_productos.idproductos) INNER JOIN inventario.ubicaciones ON ubicacion_productos.idubicacion = ubicaciones.idubicaciones ) WHERE ubicacion_productos.idubicacion = ?";
+                                    
+                                    
+                                    ps = con.prepareStatement(sql);
+                                    int fila = vproveedor.jtbProveedores.getSelectedRow();
+                                    ps.setInt(1, (int) vproveedor.jtbProveedores.getValueAt(fila, 0));
+                                    rs = ps.executeQuery();
+
+                                    int numCol = rs.getMetaData().getColumnCount() - 1;
+                                    String nombreCliente = "";
+                                    while (rs.next()) {
+                                        Row filaDatos = sheet.createRow(numFilaDatos);
+                                        for (int i = 0; i < numCol; i++) {
+                                            Cell celdaDatos = filaDatos.createCell(i);
+                                            celdaDatos.setCellStyle(datosEstilo);
+                                            nombreCliente = rs.getString("cliente");
+                                            if (i == 3) {
+                                                celdaDatos.setCellValue(rs.getInt(i+1));
+                                            }else{
+                                                celdaDatos.setCellValue(rs.getString(i+1));
+                                            }
+                                        }
+                                        numFilaDatos++;              
+                                    }
+                                    
+                                                                        
+                                    Row filaTitulo = sheet.createRow(1);
+                                    Cell celdaTitulo = filaTitulo.createCell(1);
+                                    celdaTitulo.setCellStyle(tituloEstilo);
+                                    celdaTitulo.setCellValue("Lista de materiales en "+nombreCliente);
+
+                                    sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 2));
+                                    
+                                    sheet.autoSizeColumn(0);
+                                    sheet.autoSizeColumn(1);
+                                    sheet.autoSizeColumn(2);
+                                    sheet.autoSizeColumn(3);
+
+                                    sheet.setZoom(150);
+                                    Date date = new Date();
+                                    String strDateFormat = "yyyy-MM-dd";
+                                    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+                                    String formattedDate= dateFormat.format(date);
+
+                                    FileOutputStream fileOut = new FileOutputStream("Reporte"+nombreCliente+formattedDate+".xlsx");
+                                    book.write(fileOut);
+                                    fileOut.close();
+
+                                } catch (FileNotFoundException ex) {
+                                    Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+                                } catch (IOException | SQLException ex) {
+                                    Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                             }
                         }
                     }
