@@ -18,7 +18,7 @@ public class Conexion {
     private final String BASE = "inventario";
     private final String USER = "root";
     private final String PASSWORD = "";
-    private final String URL = "jdbc:mysql://127.0.0.1:3306/" + BASE + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    private final String URL = "jdbc:mysql://127.0.0.1:3306/" + BASE + "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=America/Bogota";
     private Connection con = null;
 
     public Connection getConnection() {

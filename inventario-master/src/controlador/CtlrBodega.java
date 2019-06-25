@@ -224,7 +224,7 @@ public final class CtlrBodega implements ActionListener {
                     DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                     String formattedDate= dateFormat.format(date);
                     
-                    FileOutputStream fileOut = new FileOutputStream("ReporteBodega"+formattedDate+".xlsx");
+                    FileOutputStream fileOut = new FileOutputStream("ReporteBodega "+formattedDate+".xlsx");
                     book.write(fileOut);
                     fileOut.close();
                     

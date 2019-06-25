@@ -230,7 +230,6 @@ public class ConsultasProducto extends Conexion {
             }
         }
     }
-
     public boolean buscar(Producto pro) {
         PreparedStatement ps;
         ResultSet rs;

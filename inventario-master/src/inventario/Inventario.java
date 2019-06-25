@@ -22,6 +22,7 @@ import modelo.Producto;
 import modelo.Ubicacion;
 import vista.FrmActivos;
 import vista.FrmEntrada;
+import vista.FrmModificarSalida;
 import vista.FrmSalida;
 
 /**
@@ -37,7 +38,7 @@ public class Inventario {
         FrmActivos vproducto = new FrmActivos();
         FrmEntrada ventrada = new FrmEntrada();
         FrmSalida vsalida = new FrmSalida();
-
+        FrmModificarSalida vmodsalida = new FrmModificarSalida();
         Marca marca = new Marca();
         ConsultasMarca cmarca = new ConsultasMarca();
 
@@ -54,7 +55,7 @@ public class Inventario {
         CtlrProducto ctlrprod = new CtlrProducto(producto, cproducto, vproducto, cbodega);
         CtlrMarca ctlrmarca = new CtlrMarca(marca, cmarca, vproducto, ctlrprod);
         CtlrUbicacion ctlrubic = new CtlrUbicacion(ubicacion, cubicacion, vproducto);
-        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida, cbodega);
+        CtlrMovimiento cltrmov = new CtlrMovimiento(mov, movprod, cmov, vproducto, ventrada, vsalida,vmodsalida, cbodega);
         vproducto.setVisible(true);
         
     }

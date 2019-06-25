@@ -32,6 +32,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import vista.FrmActivos;
 import vista.FrmEntrada;
+import vista.FrmModificarSalida;
 import vista.FrmSalida;
 
 /**
@@ -47,6 +48,7 @@ public final class CtlrMovimiento implements ActionListener {
     private final FrmActivos vmovimiento;
     private final FrmEntrada ventrada;
     private final FrmSalida vsalida;
+    private final FrmModificarSalida vmodsalida;
     private final CtlrBodega ctlrbodega;
     private final DefaultTableModel modelol1e;
     private final DefaultTableModel modelol2e;
@@ -59,12 +61,13 @@ public final class CtlrMovimiento implements ActionListener {
     private final DefaultTableModel modelotbpen;
     private final DefaultTableModel modelotbpsa;
 
-    public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida, CtlrBodega ctlrbodega) {
+    public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida, FrmModificarSalida vmodsalida, CtlrBodega ctlrbodega) {
         this.movimiento = movimiento;
         this.cmovimiento = cmovimiento;
         this.vmovimiento = vmovimiento;
         this.ventrada = ventrada;
         this.vsalida = vsalida;
+        this.vmodsalida = vmodsalida;
         this.ctlrbodega = ctlrbodega;
         this.modelol1e = new DefaultTableModel();
         this.modelol2e = new DefaultTableModel();
@@ -138,6 +141,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.ventrada.btnRestarEntrada.addActionListener(this);
         this.vmovimiento.btnReporteEntrada.addActionListener(this);
         this.vmovimiento.btnReporteSalida.addActionListener(this);
+        this.vmovimiento.btnModificarSalida.addActionListener(this);
+        this.vmovimiento.btnModificarEntrada.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
         this.vsalida.jtbP1Salida.setModel(modelol1s);
         this.vsalida.jtbP1Salida.setDefaultEditor(Object.class, null);
@@ -159,7 +164,7 @@ public final class CtlrMovimiento implements ActionListener {
     }
 
     public void llenarTablaCliente() {
-        limpiarClientes();
+        limpiarSalidas(modelol1e);
         int index = ventrada.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modeloclientes.getElementAt(index);
         idcliente2 = cliente.getId();
@@ -176,27 +181,6 @@ public final class CtlrMovimiento implements ActionListener {
         }
     }
 
-    public void limpiarClientes() {
-        int size = modelol1e.getRowCount();
-        for (int i = 0; i < size; i++) {
-            modelol1e.removeRow(size - 1 - i);
-        }
-    }
-
-    public void limpiarProdSalidas(DefaultTableModel modelo) {
-        int size = modelo.getRowCount();
-        for (int i = 0; i < size; i++) {
-            modelo.removeRow(size - 1 - i);
-        }
-    }
-
-    public void limpiarSalidasProd(DefaultTableModel modelo) {
-        int size = modelo.getRowCount();
-        for (int i = 0; i < size; i++) {
-            modelo.removeRow(size - 1 - i);
-        }
-    }
-
     public void limpiarSalidas(DefaultTableModel modelo) {
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
@@ -205,7 +189,7 @@ public final class CtlrMovimiento implements ActionListener {
     }
 
     public void llenarTablaSalidasProd() {
-        limpiarSalidasProd(modelotbpsa);
+        limpiarSalidas(modelotbpsa);
         String codigo = vmovimiento.jtbSalida.getValueAt(vmovimiento.jtbSalida.getSelectedRow(), 0).toString();
         ArrayList<Object[]> movprods = cmovimiento.getSalidasProd(codigo);
         for (int i = 0; i < movprods.size(); i++) {
@@ -215,7 +199,7 @@ public final class CtlrMovimiento implements ActionListener {
     }
 
     public void llenarTablaEntradasProd() {
-        limpiarSalidasProd(modelotbpen);
+        limpiarSalidas(modelotbpen);
         String codigo = vmovimiento.jtbEntradas.getValueAt(vmovimiento.jtbEntradas.getSelectedRow(), 0).toString();
         ArrayList<Object[]> movprods = cmovimiento.getSalidasProd(codigo);
         for (int i = 0; i < movprods.size(); i++) {
@@ -268,7 +252,7 @@ public final class CtlrMovimiento implements ActionListener {
     }
 
     public void llenarTablaBodega() {
-        limpiarTablaBodega();
+        limpiarSalidas(modelol1s);
         ArrayList<Producto> prods = cmovimiento.getProductosBodega();
         Object[] array = new Object[3];
 
@@ -279,27 +263,20 @@ public final class CtlrMovimiento implements ActionListener {
             modelol1s.addRow(array);
         }
     }
-
-    public void limpiarTablaBodega() {
-        int size = modelol1s.getRowCount();
-        for (int i = 0; i < size; i++) {
-            modelol1s.removeRow(size - 1 - i);
-        }
-    }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vmovimiento.btnSalida) {
             vsalida.setVisible(true);
             llenarListaClientes(modelocliente);
             llenarTablaBodega();
-            limpiarProdSalidas(modelol2s);
+            limpiarSalidas(modelol2s);
         } else {
             if (e.getSource() == vmovimiento.btnEntrada) {
                 ventrada.setVisible(true);
                 llenarListaClientes(modeloclientes);
-                limpiarClientes();
-                limpiarProdSalidas(modelol2e);
+                limpiarSalidas(modelol1e);
+                limpiarSalidas(modelol2e);
 
             } else {
                 if (e.getSource() == vsalida.btnSumarSalida) {
@@ -356,7 +333,7 @@ public final class CtlrMovimiento implements ActionListener {
                                 ctlrbodega.llenarTabla();
                                 llenarTablaSalidas();
                                 llenarTablaBodega();
-                                limpiarProdSalidas(modelol2s);
+                                limpiarSalidas(modelol2s);
                                 JOptionPane.showMessageDialog(null, "Salida agregada");
                             } else {
                                 JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
@@ -417,8 +394,8 @@ public final class CtlrMovimiento implements ActionListener {
                                             cmovimiento.sumarBodega(cantidad, movprod.getActivo());
                                         }
                                         llenarTablaEntradas();
-                                        limpiarClientes();
-                                        limpiarProdSalidas(modelol2e);
+                                        limpiarSalidas(modelol1e);
+                                        limpiarSalidas(modelol2e);
                                         JOptionPane.showMessageDialog(null, "Entrada agregada");
                                     } catch (ParseException ex) {
                                         System.out.println(ex);
@@ -472,6 +449,16 @@ public final class CtlrMovimiento implements ActionListener {
                                                     view.setVisible(true);
                                                 } catch (JRException ex) {
                                                     Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+                                                }
+                                            } else {
+                                                if (e.getSource() == vmovimiento.btnModificarSalida) {
+                                                    vmodsalida.setVisible(true);
+                                                    int row = vmovimiento.jtbSalida.getSelectedRow();
+                                                    String code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
+                                                    if (cmovimiento.getMovimiento(code)) {
+                                                        
+                                                    }
+                                                    
                                                 }
                                             }
                                         }

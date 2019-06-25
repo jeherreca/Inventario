@@ -20,6 +20,39 @@ public class ConsultasMovimiento extends Conexion {
     public Connection getConexion(){
         return getConnection();
     }
+    
+    public boolean getMovimiento (String id, Movimiento movimiento) {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT identrada, fecha, codigo, idubicacion, observaciones FROM movimiento WHERE codigo=?";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setString(1, id);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                movimiento.setId(rs.getInt("identrada"));
+                movimiento.setCodigo(rs.getString("codigo"));
+                movimiento.setFecha(rs.getDate("fecha"));
+                movimiento.setObservaciones("observaciones");
+                movimiento.setUbicacion(rs.getInt("idubicacion"));
+            }
+            
+            return true;
+        }catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public String getUbicacion(int id) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -271,6 +304,7 @@ public class ConsultasMovimiento extends Conexion {
             while (rs.next()) {
                 Movimiento mov = new Movimiento();
                 mov.setId(rs.getInt("identrada"));
+                System.out.println(rs.getDate("fecha").toLocalDate());
                 mov.setFecha(rs.getDate("fecha"));
                 mov.setCodigo(rs.getString("codigo"));
                 mov.setUbicacion(rs.getInt("idubicacion"));
@@ -279,7 +313,6 @@ public class ConsultasMovimiento extends Conexion {
 
                 salidas.add(mov);
             }
-
             return salidas;
         } catch (SQLException e) {
             System.out.println(e);
@@ -354,7 +387,7 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
-
+    
     public ArrayList<ListHelper> getClientes() {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -398,7 +431,7 @@ public class ConsultasMovimiento extends Conexion {
 
             ps.execute();
 
-            System.out.println("Ubicacion modificada");
+            System.out.println("Ubicación modificada");
             return true;
         } catch (SQLException e) {
             System.out.println(e);

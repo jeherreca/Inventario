@@ -231,10 +231,11 @@ public final class CtlrProducto implements ActionListener {
                                 Sheet sheet = book.createSheet("Productos");
 
                                 try {
-                                    InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg");    
-                                    byte[] bytes = IOUtils.toByteArray(is);
-                                    int imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
-                                    is.close();
+                                    int imgIndex;
+                                    try (InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg")) {
+                                        byte[] bytes = IOUtils.toByteArray(is);
+                                        imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+                                    }
 
                                     CreationHelper help = book.getCreationHelper();
                                     Drawing draw = sheet.createDrawingPatriarch();
@@ -336,9 +337,9 @@ public final class CtlrProducto implements ActionListener {
                                     DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                                     String formattedDate= dateFormat.format(date);
 
-                                    FileOutputStream fileOut = new FileOutputStream("ReporteInventasrio"+formattedDate+".xlsx");
-                                    book.write(fileOut);
-                                    fileOut.close();
+                                    try (FileOutputStream fileOut = new FileOutputStream("ReporteInventario "+formattedDate+".xlsx")) {
+                                        book.write(fileOut);
+                                    }
 
                                 } catch (FileNotFoundException ex) {
                                     Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
