@@ -5,12 +5,14 @@
  */
 package modelo;
 
+import inventario.ComboBoxHelper;
 import inventario.ListHelper;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -21,6 +23,33 @@ public class ConsultasMovimiento extends Conexion {
         return getConnection();
     }
     
+    public ArrayList<ComboBoxHelper> getComboBoxClientes(){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT idubicaciones, nombre FROM ubicaciones";
+        ArrayList<ComboBoxHelper> clientes = new ArrayList<>();
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                clientes.add(new ComboBoxHelper (rs.getInt("idubicaciones"), rs.getString("nombre")));
+            }
+            
+            return clientes;
+        }catch(SQLException e){
+            System.out.println(e);
+            return clientes;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public boolean getMovimiento (String id, Movimiento movimiento) {
         PreparedStatement ps;
         Connection con = getConnection();
@@ -37,7 +66,7 @@ public class ConsultasMovimiento extends Conexion {
                 movimiento.setId(rs.getInt("identrada"));
                 movimiento.setCodigo(rs.getString("codigo"));
                 movimiento.setFecha(rs.getDate("fecha"));
-                movimiento.setObservaciones("observaciones");
+                movimiento.setObservaciones(rs.getString("observaciones"));
                 movimiento.setUbicacion(rs.getInt("idubicacion"));
             }
             
@@ -534,7 +563,60 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
-
+    public boolean updateMovimiento(Date fecha, int id, String observaciones, int movimiento){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        
+        String sql = "UPDATE movimiento SET fecha=?, idubicacion=?, observaciones=? WHERE identrada=? ";
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setDate(1, new java.sql.Date(fecha.getTime()));
+            ps.setInt(2, id);
+            ps.setString(3, observaciones);
+            ps.setInt(4, movimiento);
+            
+            ps.execute();
+            
+            System.out.println("Entrada modificada");
+            
+            return true;
+        }catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
+    public boolean updateMovProd (int cantidad, int id){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "UPDATE movimiento_productos SET cantidad =? WHERE idproducto =?";
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, cantidad);
+            ps.setInt(2, id);
+            
+            ps.execute();
+            
+            return true;
+        }catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public Producto getProductoByCodigo(String codigo) {
         PreparedStatement ps;
         Connection con = getConnection();

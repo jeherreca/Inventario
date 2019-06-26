@@ -5,6 +5,7 @@
  */
 package controlador;
 
+import inventario.ComboBoxHelper;
 import inventario.ListHelper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
@@ -60,6 +62,8 @@ public final class CtlrMovimiento implements ActionListener {
     private final DefaultTableModel modelotbsa;
     private final DefaultTableModel modelotbpen;
     private final DefaultTableModel modelotbpsa;
+    private final DefaultTableModel modelomods;
+    private final DefaultComboBoxModel cbxmodelo;
 
     public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida, FrmModificarSalida vmodsalida, CtlrBodega ctlrbodega) {
         this.movimiento = movimiento;
@@ -79,6 +83,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.modelotbsa = new DefaultTableModel();
         this.modelotbpen = new DefaultTableModel();
         this.modelotbpsa = new DefaultTableModel();
+        this.modelomods = new DefaultTableModel();
+        this.cbxmodelo = new DefaultComboBoxModel();
         this.modelotben.addColumn("Código");
         this.modelotben.addColumn("Fecha");
         this.modelotben.addColumn("Ubicación");
@@ -105,6 +111,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.modelol2e.addColumn("Código");
         this.modelol2e.addColumn("Nombre");
         this.modelol2e.addColumn("Cantidad");
+        this.modelomods.addColumn("Código");
+        this.modelomods.addColumn("Cantidad");
         llenarTablaSalidas();
         llenarTablaEntradas();
         this.vsalida.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -143,6 +151,7 @@ public final class CtlrMovimiento implements ActionListener {
         this.vmovimiento.btnReporteSalida.addActionListener(this);
         this.vmovimiento.btnModificarSalida.addActionListener(this);
         this.vmovimiento.btnModificarEntrada.addActionListener(this);
+        this.vmodsalida.btnAceptarMod.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
         this.vsalida.jtbP1Salida.setModel(modelol1s);
         this.vsalida.jtbP1Salida.setDefaultEditor(Object.class, null);
@@ -161,6 +170,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.ventrada.jtbP1Entrada.setDefaultEditor(Object.class, null);
         this.ventrada.jtbP2Entrada.setModel(modelol2e);
         this.ventrada.jtbP2Entrada.setDefaultEditor(Object.class, null);
+        this.vmodsalida.jtbModProductosS.setModel(modelomods);
+        this.vmodsalida.cbxModClienteS.setModel(cbxmodelo);
     }
 
     public void llenarTablaCliente() {
@@ -250,7 +261,13 @@ public final class CtlrMovimiento implements ActionListener {
             modelotben.addRow(array);
         }
     }
-
+    public void llenarComboBox() {
+        cbxmodelo.removeAllElements();
+        ArrayList<ComboBoxHelper> clientes = cmovimiento.getComboBoxClientes();
+        for (int i = 0; i < clientes.size(); i++) {
+            cbxmodelo.addElement(clientes.get(i));
+        }
+    }
     public void llenarTablaBodega() {
         limpiarSalidas(modelol1s);
         ArrayList<Producto> prods = cmovimiento.getProductosBodega();
@@ -452,13 +469,30 @@ public final class CtlrMovimiento implements ActionListener {
                                                 }
                                             } else {
                                                 if (e.getSource() == vmovimiento.btnModificarSalida) {
-                                                    vmodsalida.setVisible(true);
                                                     int row = vmovimiento.jtbSalida.getSelectedRow();
-                                                    String code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
-                                                    if (cmovimiento.getMovimiento(code)) {
-                                                        
+                                                    if (row != (-1)){
+                                                        String code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
+                                                        cmovimiento.getMovimiento(code, movimiento);
+                                                        vmodsalida.setVisible(true);
+                                                        llenarComboBox();
+                                                        vmodsalida.txtModCodigoS.setText(movimiento.getCodigo());
+                                                        vmodsalida.txtModFechaS.setText(movimiento.getFecha()+"");
+                                                        vmodsalida.txtModObservacionesS.setText(movimiento.getObservaciones());
+                                                        limpiarSalidas(modelomods);
+                                                        vmodsalida.cbxModClienteS.getModel().setSelectedItem(new ComboBoxHelper(movimiento.getId(), vmovimiento.jtbSalida.getValueAt(row, 2).toString()));
+                                                        for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
+                                                            modelomods.addRow(new Object[]{vmovimiento.jtbProSalidas.getValueAt(i,0), vmovimiento.jtbProSalidas.getValueAt(i, 2)});
+                                                        }
+                                                    }else{
+                                                        JOptionPane.showMessageDialog(null, "No selecciono ningún movimiento");
                                                     }
                                                     
+                                                } else {
+                                                    if (e.getSource() == vmodsalida.btnAceptarMod) {
+                                                        for (int i = 0; i < vmodsalida.jtbModProductosS.getRowCount(); i++) {
+                                                            
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

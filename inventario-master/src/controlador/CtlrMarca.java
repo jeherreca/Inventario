@@ -245,10 +245,11 @@ public final class CtlrMarca implements ActionListener {
                                 Sheet sheet = book.createSheet("Productos");
 
                                 try {
-                                    InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg");    
-                                    byte[] bytes = IOUtils.toByteArray(is);
-                                    int imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
-                                    is.close();
+                                    int imgIndex;
+                                    try (InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg")) {
+                                        byte[] bytes = IOUtils.toByteArray(is);
+                                        imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+                                    }
 
                                     CreationHelper help = book.getCreationHelper();
                                     Drawing draw = sheet.createDrawingPatriarch();
