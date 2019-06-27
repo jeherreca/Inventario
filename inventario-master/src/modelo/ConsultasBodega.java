@@ -16,9 +16,11 @@ import java.util.ArrayList;
  * @author Administrator
  */
 public class ConsultasBodega extends Conexion {
+    
     public Connection getConexion(){
         return getConnection();
     }
+    
     public boolean insertar(Producto pro) {
         PreparedStatement ps;
         Connection con = getConnection();

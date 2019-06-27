@@ -64,6 +64,7 @@ public final class CtlrMovimiento implements ActionListener {
     private final DefaultTableModel modelotbpsa;
     private final DefaultTableModel modelomods;
     private final DefaultComboBoxModel cbxmodelo;
+    private final DefaultTableModel modelolmods;
 
     public CtlrMovimiento(Movimiento movimiento, MovimientoProducto movprod, ConsultasMovimiento cmovimiento, FrmActivos vmovimiento, FrmEntrada ventrada, FrmSalida vsalida, FrmModificarSalida vmodsalida, CtlrBodega ctlrbodega) {
         this.movimiento = movimiento;
@@ -85,6 +86,7 @@ public final class CtlrMovimiento implements ActionListener {
         this.modelotbpsa = new DefaultTableModel();
         this.modelomods = new DefaultTableModel();
         this.cbxmodelo = new DefaultComboBoxModel();
+        this.modelolmods = new DefaultTableModel();
         this.modelotben.addColumn("Código");
         this.modelotben.addColumn("Fecha");
         this.modelotben.addColumn("Ubicación");
@@ -111,6 +113,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.modelol2e.addColumn("Código");
         this.modelol2e.addColumn("Nombre");
         this.modelol2e.addColumn("Cantidad");
+        this.modelolmods.addColumn("Código");
+        this.modelolmods.addColumn("Cantidad");
         this.modelomods.addColumn("Código");
         this.modelomods.addColumn("Cantidad");
         llenarTablaSalidas();
@@ -118,7 +122,8 @@ public final class CtlrMovimiento implements ActionListener {
         this.vsalida.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                agregarCliente();
+                
+                limpiarSalidas(modelol2s);
             }
         });
         this.vmovimiento.jtbSalida.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -153,6 +158,7 @@ public final class CtlrMovimiento implements ActionListener {
         this.vmovimiento.btnModificarEntrada.addActionListener(this);
         this.vmodsalida.btnAceptarMod.addActionListener(this);
         this.vsalida.lstCliente.setModel(modelocliente);
+        this.vmodsalida.jtbBodega.setModel(modelolmods);
         this.vsalida.jtbP1Salida.setModel(modelol1s);
         this.vsalida.jtbP1Salida.setDefaultEditor(Object.class, null);
         this.vsalida.jtbP2Salida.setModel(modelol2s);
@@ -179,7 +185,6 @@ public final class CtlrMovimiento implements ActionListener {
         int index = ventrada.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modeloclientes.getElementAt(index);
         idcliente2 = cliente.getId();
-        System.out.println(idcliente2);
 
         ArrayList<Producto> prod = cmovimiento.getProductosByID(idcliente2);
         Object[] array = new Object[3];
@@ -222,7 +227,6 @@ public final class CtlrMovimiento implements ActionListener {
         int index = vsalida.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modelocliente.getElementAt(index);
         idcliente1 = cliente.getId();
-        System.out.println(idcliente1);
     }
 
     public void llenarListaClientes(DefaultListModel modelo) {
@@ -426,20 +430,13 @@ public final class CtlrMovimiento implements ActionListener {
                                             try {
                                                 JasperReport reporte = null;
                                                 String path = "src\\reporte\\ReporteEntradas.jasper";
-
                                                 Map parametros = new HashMap();
                                                 int fila = vmovimiento.jtbEntradas.getSelectedRow();
-
                                                 parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0));
-
                                                 reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
                                                 JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-
                                                 JasperViewer view = new JasperViewer(jprint, false);
-
                                                 view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
                                                 view.setVisible(true);
                                             } catch (JRException ex) {
                                                 Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
@@ -449,20 +446,13 @@ public final class CtlrMovimiento implements ActionListener {
                                                 try {
                                                     JasperReport reporte = null;
                                                     String path = "src\\reporte\\ReporteSalidas.jasper";
-
                                                     Map parametros = new HashMap();
                                                     int fila = vmovimiento.jtbSalida.getSelectedRow();
-
                                                     parametros.put("codigo", vmovimiento.jtbSalida.getValueAt(fila, 0));
-
                                                     reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
                                                     JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-
                                                     JasperViewer view = new JasperViewer(jprint, false);
-
                                                     view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
                                                     view.setVisible(true);
                                                 } catch (JRException ex) {
                                                     Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
@@ -483,10 +473,13 @@ public final class CtlrMovimiento implements ActionListener {
                                                         for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
                                                             modelomods.addRow(new Object[]{vmovimiento.jtbProSalidas.getValueAt(i,0), vmovimiento.jtbProSalidas.getValueAt(i, 2)});
                                                         }
+                                                        ArrayList<Producto> bodega = cmovimiento.getProductosBodega();
+                                                        for (int i = 0; i < bodega.size(); i++) { 
+                                                            modelolmods.addRow(new Object[]{bodega.get(i).getCodigo(), bodega.get(i).getStock()});
+                                                        }
                                                     }else{
                                                         JOptionPane.showMessageDialog(null, "No selecciono ningún movimiento");
                                                     }
-                                                    
                                                 } else {
                                                     if (e.getSource() == vmodsalida.btnAceptarMod) {
                                                         for (int i = 0; i < vmodsalida.jtbModProductosS.getRowCount(); i++) {
