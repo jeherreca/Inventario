@@ -212,7 +212,6 @@ public final class CtlrProducto implements ActionListener {
                                 JasperReport reporte = null;
                                 String path = "src\\reporte\\ReporteActivos.jasper";
                                                                 
-                                
                                 reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
                                 
                                 JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cproducto.getConexion());
