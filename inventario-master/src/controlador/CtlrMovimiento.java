@@ -42,7 +42,9 @@ import vista.FrmSalida;
  * @author Administrator
  */
 public final class CtlrMovimiento implements ActionListener {
-
+    
+    
+    private String code;
     private final Movimiento movimiento;
     private int idcliente1;
     private int idcliente2;
@@ -461,7 +463,7 @@ public final class CtlrMovimiento implements ActionListener {
                                                 if (e.getSource() == vmovimiento.btnModificarSalida) {
                                                     int row = vmovimiento.jtbSalida.getSelectedRow();
                                                     if (row != (-1)){
-                                                        String code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
+                                                        code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
                                                         cmovimiento.getMovimiento(code, movimiento);
                                                         vmodsalida.setVisible(true);
                                                         llenarComboBox();
@@ -482,6 +484,11 @@ public final class CtlrMovimiento implements ActionListener {
                                                     }
                                                 } else {
                                                     if (e.getSource() == vmodsalida.btnAceptarMod) {
+                                                        for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
+                                                            
+                                                        }
+                                                        cmovimiento.borrarMovimientos(code);
+                                                        
                                                         for (int i = 0; i < vmodsalida.jtbModProductosS.getRowCount(); i++) {
                                                             
                                                         }

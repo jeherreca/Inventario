@@ -503,24 +503,7 @@ public class ConsultasMovimiento extends Conexion {
     }
 
     public String[] getNombreCodigoProducto(int id) {
-        PreparedStatement ps;
-        Connection con = getConnection();
-        ResultSet rs;
-
-        String[] respuestas = new String[2];
-        String sql = "SELECT codigo, nombre FROM activo WHERE idproductos=?";
-
-        try {
-            ps = con.prepareStatement(sql);
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                respuestas[0] = rs.getString("codigo");
-                respuestas[1] = rs.getString("nombre");
-            }
-
-            return respuestas;
+        PreparedState 
         } catch (SQLException e) {
             System.out.println(e);
             return respuestas;
@@ -675,5 +658,29 @@ public class ConsultasMovimiento extends Conexion {
                 System.out.println(e);
             }
         }
+    }
+    
+    public boolean borrarMovimientos(String codigo){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        
+        String sql = "DELETE FROM movimiento_productos WHERE idmovimiento=?";
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, getIDByCode(codigo));
+            ps.execute();
+            
+            return true;
+        }catch(SQLException e){
+            System.out.println(e);
+            return false;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+        
     }
 }
