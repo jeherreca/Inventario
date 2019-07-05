@@ -136,6 +136,23 @@ public final class CtlrProducto implements ActionListener {
         vproducto.txtCantidad.setText(rs[6]);
     }
 
+    public void limpiar() {
+        vproducto.txtIDActivo.setText("");
+        vproducto.txtCodigoActivos.setText("");
+        vproducto.txtNombre.setText("");
+        vproducto.txtDescripcion.setText("");
+        vproducto.txtPeso.setText("");
+        vproducto.txtCantidad.setText("");
+    }
+
+    public void llenarComboBox() {
+        cbxmodelo.removeAllElements();
+        ArrayList<ComboBoxHelper> marcas = cproducto.getMarcas();
+        for (int i = 0; i < marcas.size(); i++) {
+            cbxmodelo.addElement(marcas.get(i));
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vproducto.btnBuscar) {
@@ -153,221 +170,198 @@ public final class CtlrProducto implements ActionListener {
                 limpiar();
             }
 
-        } else {
-            if (e.getSource() == vproducto.btnEliminar) {
-                producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
-                if (cproducto.eliminar(producto)) {
-                    JOptionPane.showMessageDialog(null, "Producto eliminado");
-                    limpiar();
-                    llenarTabla();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error al eliminar");
-                    limpiar();
-                    llenarTabla();
-                }
+        } else if (e.getSource() == vproducto.btnEliminar) {
+
+            producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
+            if (cproducto.eliminar(producto)) {
+                JOptionPane.showMessageDialog(null, "Producto eliminado");
+                limpiar();
+                llenarTabla();
             } else {
-                if (e.getSource() == vproducto.btnInsertar) {
-                    producto.setCodigo(vproducto.txtCodigoActivos.getText());
-                    producto.setNombre(vproducto.txtNombre.getText());
-                    producto.setDescripcion(vproducto.txtDescripcion.getText());
-                    producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
-                    ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
-                    producto.setMarca(marca.getId());
-                    producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
-                    if (cproducto.insertar(producto)) {
-                        cbodega.getCbodega().insertar(producto);
-                        cbodega.llenarTabla();
-                        JOptionPane.showMessageDialog(null, "Producto insertado");
-                        limpiar();
-                        llenarTabla();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error al insertar producto");
-                        limpiar();
-                        llenarTabla();
-                    }
+                JOptionPane.showMessageDialog(null, "Error al eliminar");
+                limpiar();
+                llenarTabla();
+            }
+        } else if (e.getSource() == vproducto.btnInsertar) {
 
-                } else {
-                    if (e.getSource() == vproducto.btnModificar) {
-                        producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
-                        producto.setCodigo(vproducto.txtCodigoActivos.getText());
-                        producto.setNombre(vproducto.txtNombre.getText());
-                        producto.setDescripcion(vproducto.txtDescripcion.getText());
-                        producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
-                        ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
-                        producto.setMarca(marca.getId());
-                        producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
-
-                        if (cproducto.modificar(producto)) {
-                            JOptionPane.showMessageDialog(null, "Producto modificado");
-                            limpiar();
-                            llenarTabla();
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Error al modificar producto");
-                            limpiar();
-                            llenarTabla();
-                        }
-                    } else {
-                        if (e.getSource() == vproducto.btnReporteProducto) {
-                            try{
-                                JasperReport reporte = null;
-                                String path = "src\\reporte\\ReporteActivos.jasper";
-                                                                
-                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-                                
-                                JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cproducto.getConexion());
-                                
-                                JasperViewer view = new JasperViewer (jprint, false);
-                                
-                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                                
-                                view.setVisible(true);
-                            } catch (JRException ex) {
-                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        } else {
-                            if (e.getSource() == vproducto.btnExcelActivo) {
-                                Workbook book = new XSSFWorkbook();
-                                Sheet sheet = book.createSheet("Productos");
-
-                                try {
-                                    int imgIndex;
-                                    try (InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg")) {
-                                        byte[] bytes = IOUtils.toByteArray(is);
-                                        imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
-                                    }
-
-                                    CreationHelper help = book.getCreationHelper();
-                                    Drawing draw = sheet.createDrawingPatriarch();
-
-                                    ClientAnchor anchor = help.createClientAnchor();
-                                    anchor.setCol1(0);
-                                    anchor.setRow1(0);
-                                    Picture pict = draw.createPicture(anchor, imgIndex);
-                                    pict.resize(1, 3);
-
-                                    CellStyle tituloEstilo = book.createCellStyle();
-                                    tituloEstilo.setAlignment(HorizontalAlignment.CENTER);
-                                    tituloEstilo.setVerticalAlignment(VerticalAlignment.CENTER);
-                                    Font fuenteTitulo = book.createFont();
-                                    fuenteTitulo.setFontName("Arial");
-                                    fuenteTitulo.setBold(true);
-                                    fuenteTitulo.setFontHeightInPoints((short) 14);
-                                    tituloEstilo.setFont(fuenteTitulo);
-
-                                    Row filaTitulo = sheet.createRow(1);
-                                    Cell celdaTitulo = filaTitulo.createCell(1);
-                                    celdaTitulo.setCellStyle(tituloEstilo);
-                                    celdaTitulo.setCellValue("Lista de materiales");
-
-                                    sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 3));
-
-                                    String[] cabecera = {"Código", "Nombre", "Descripción", "Peso", "Cantidad", "Marca"};
-
-                                    CellStyle headerStyle = book.createCellStyle();
-                                    headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
-                                    headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-                                    headerStyle.setBorderBottom(BorderStyle.THIN);
-                                    headerStyle.setBorderBottom(BorderStyle.THIN);
-                                    headerStyle.setBorderBottom(BorderStyle.THIN);
-
-                                    Font fuente = book.createFont();
-                                    fuente.setFontName("Arial");
-                                    fuente.setBold(true);
-                                    fuente.setFontHeightInPoints((short) 14);
-                                    fuente.setColor(IndexedColors.WHITE.getIndex());
-                                    fuente.setFontHeightInPoints((short) 12);
-                                    headerStyle.setFont(fuente);
-
-                                    Row filaEncabezados = sheet.createRow(4);
-
-                                    for (int i = 0; i < cabecera.length; i++) {
-                                        Cell celdaEncabezado = filaEncabezados.createCell(i);
-                                        celdaEncabezado.setCellStyle(headerStyle);
-                                        celdaEncabezado.setCellValue(cabecera[i]);
-                                    }
-
-                                    Connection con = cproducto.getConexion();
-                                    PreparedStatement ps;
-                                    ResultSet rs;
-
-                                    int numFilaDatos = 5;
-
-                                    CellStyle datosEstilo = book.createCellStyle();
-                                    datosEstilo.setBorderBottom(BorderStyle.THIN);
-                                    datosEstilo.setBorderLeft(BorderStyle.THIN);
-                                    datosEstilo.setBorderTop(BorderStyle.THIN);
-                                    datosEstilo.setBorderRight(BorderStyle.THIN);
-
-                                    String sql = "SELECT codigo, activo.nombre, descripcion, peso, cantidad, marca.nombre as marca FROM activo JOIN marca ON activo.idmarca = marca.idmarca";
-                                    ps = con.prepareStatement(sql);
-                                    rs = ps.executeQuery();
-
-                                    int numCol = rs.getMetaData().getColumnCount();
-
-                                    while (rs.next()) {
-                                        Row filaDatos = sheet.createRow(numFilaDatos);
-                                        for (int i = 0; i < numCol; i++) {
-                                            Cell celdaDatos = filaDatos.createCell(i);
-                                            celdaDatos.setCellStyle(datosEstilo);
-
-                                            if (i == 3) {
-                                                celdaDatos.setCellValue(rs.getDouble(i+1));
-                                            }else{
-                                                if (i == 4) {
-                                                    celdaDatos.setCellValue(rs.getInt(i+1));
-                                                }else{
-                                                    celdaDatos.setCellValue(rs.getString(i+1));
-                                                }
-                                            }
-                                        }
-                                        numFilaDatos++;              
-                                    }
-
-                                    sheet.autoSizeColumn(0);
-                                    sheet.autoSizeColumn(1);
-                                    sheet.autoSizeColumn(2);
-                                    sheet.autoSizeColumn(3);
-                                    sheet.autoSizeColumn(4);
-                                    sheet.autoSizeColumn(5);
-
-                                    sheet.setZoom(150);
-                                    Date date = new Date();
-                                    String strDateFormat = "yyyy-MM-dd";
-                                    DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
-                                    String formattedDate= dateFormat.format(date);
-
-                                    try (FileOutputStream fileOut = new FileOutputStream("ReporteInventario "+formattedDate+".xlsx")) {
-                                        book.write(fileOut);
-                                    }
-
-                                } catch (FileNotFoundException ex) {
-                                    Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
-                                } catch (IOException | SQLException ex) {
-                                    Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }
-                        }
-                    }
-                }
+            producto.setCodigo(vproducto.txtCodigoActivos.getText());
+            producto.setNombre(vproducto.txtNombre.getText());
+            producto.setDescripcion(vproducto.txtDescripcion.getText());
+            producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
+            ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
+            producto.setMarca(marca.getId());
+            producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
+            if (cproducto.insertar(producto)) {
+                cbodega.getCbodega().insertar(producto);
+                cbodega.llenarTabla();
+                JOptionPane.showMessageDialog(null, "Producto insertado");
+                limpiar();
+                llenarTabla();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al insertar producto");
+                limpiar();
+                llenarTabla();
             }
 
-        }
-    }
+        } else if (e.getSource() == vproducto.btnModificar) {
 
-    public void limpiar() {
-        vproducto.txtIDActivo.setText("");
-        vproducto.txtCodigoActivos.setText("");
-        vproducto.txtNombre.setText("");
-        vproducto.txtDescripcion.setText("");
-        vproducto.txtPeso.setText("");
-        vproducto.txtCantidad.setText("");
-    }
+            producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
+            producto.setCodigo(vproducto.txtCodigoActivos.getText());
+            producto.setNombre(vproducto.txtNombre.getText());
+            producto.setDescripcion(vproducto.txtDescripcion.getText());
+            producto.setPeso(Double.parseDouble(vproducto.txtPeso.getText()));
+            ComboBoxHelper marca = (ComboBoxHelper) vproducto.cbxMarca.getSelectedItem();
+            producto.setMarca(marca.getId());
+            producto.setStock(Integer.parseInt(vproducto.txtCantidad.getText()));
 
-    public void llenarComboBox() {
-        cbxmodelo.removeAllElements();
-        ArrayList<ComboBoxHelper> marcas = cproducto.getMarcas();
-        for (int i = 0; i < marcas.size(); i++) {
-            cbxmodelo.addElement(marcas.get(i));
+            if (cproducto.modificar(producto)) {
+                JOptionPane.showMessageDialog(null, "Producto modificado");
+                limpiar();
+                llenarTabla();
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al modificar producto");
+                limpiar();
+                llenarTabla();
+            }
+        } else if (e.getSource() == vproducto.btnReporteProducto) {
+
+            try {
+                JasperReport reporte = null;
+                String path = "src\\reporte\\ReporteActivos.jasper";
+
+                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+
+                JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cproducto.getConexion());
+
+                JasperViewer view = new JasperViewer(jprint, false);
+
+                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+
+                view.setVisible(true);
+            } catch (JRException ex) {
+                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (e.getSource() == vproducto.btnExcelActivo) {
+
+            Workbook book = new XSSFWorkbook();
+            Sheet sheet = book.createSheet("Productos");
+
+            try {
+                int imgIndex;
+                try (InputStream is = new FileInputStream("src\\resources\\logoandamas.jpg")) {
+                    byte[] bytes = IOUtils.toByteArray(is);
+                    imgIndex = book.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
+                }
+
+                CreationHelper help = book.getCreationHelper();
+                Drawing draw = sheet.createDrawingPatriarch();
+
+                ClientAnchor anchor = help.createClientAnchor();
+                anchor.setCol1(0);
+                anchor.setRow1(0);
+                Picture pict = draw.createPicture(anchor, imgIndex);
+                pict.resize(1, 3);
+
+                CellStyle tituloEstilo = book.createCellStyle();
+                tituloEstilo.setAlignment(HorizontalAlignment.CENTER);
+                tituloEstilo.setVerticalAlignment(VerticalAlignment.CENTER);
+                Font fuenteTitulo = book.createFont();
+                fuenteTitulo.setFontName("Arial");
+                fuenteTitulo.setBold(true);
+                fuenteTitulo.setFontHeightInPoints((short) 14);
+                tituloEstilo.setFont(fuenteTitulo);
+
+                Row filaTitulo = sheet.createRow(1);
+                Cell celdaTitulo = filaTitulo.createCell(1);
+                celdaTitulo.setCellStyle(tituloEstilo);
+                celdaTitulo.setCellValue("Lista de materiales");
+
+                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 3));
+
+                String[] cabecera = {"Código", "Nombre", "Descripción", "Peso", "Cantidad", "Marca"};
+
+                CellStyle headerStyle = book.createCellStyle();
+                headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
+                headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                headerStyle.setBorderBottom(BorderStyle.THIN);
+                headerStyle.setBorderBottom(BorderStyle.THIN);
+                headerStyle.setBorderBottom(BorderStyle.THIN);
+
+                Font fuente = book.createFont();
+                fuente.setFontName("Arial");
+                fuente.setBold(true);
+                fuente.setFontHeightInPoints((short) 14);
+                fuente.setColor(IndexedColors.WHITE.getIndex());
+                fuente.setFontHeightInPoints((short) 12);
+                headerStyle.setFont(fuente);
+
+                Row filaEncabezados = sheet.createRow(4);
+
+                for (int i = 0; i < cabecera.length; i++) {
+                    Cell celdaEncabezado = filaEncabezados.createCell(i);
+                    celdaEncabezado.setCellStyle(headerStyle);
+                    celdaEncabezado.setCellValue(cabecera[i]);
+                }
+
+                Connection con = cproducto.getConexion();
+                PreparedStatement ps;
+                ResultSet rs;
+
+                int numFilaDatos = 5;
+
+                CellStyle datosEstilo = book.createCellStyle();
+                datosEstilo.setBorderBottom(BorderStyle.THIN);
+                datosEstilo.setBorderLeft(BorderStyle.THIN);
+                datosEstilo.setBorderTop(BorderStyle.THIN);
+                datosEstilo.setBorderRight(BorderStyle.THIN);
+
+                String sql = "SELECT codigo, activo.nombre, descripcion, peso, cantidad, marca.nombre as marca FROM activo JOIN marca ON activo.idmarca = marca.idmarca";
+                ps = con.prepareStatement(sql);
+                rs = ps.executeQuery();
+
+                int numCol = rs.getMetaData().getColumnCount();
+
+                while (rs.next()) {
+                    Row filaDatos = sheet.createRow(numFilaDatos);
+                    for (int i = 0; i < numCol; i++) {
+                        Cell celdaDatos = filaDatos.createCell(i);
+                        celdaDatos.setCellStyle(datosEstilo);
+
+                        if (i == 3) {
+                            celdaDatos.setCellValue(rs.getDouble(i + 1));
+                        } else {
+                            if (i == 4) {
+                                celdaDatos.setCellValue(rs.getInt(i + 1));
+                            } else {
+                                celdaDatos.setCellValue(rs.getString(i + 1));
+                            }
+                        }
+                    }
+                    numFilaDatos++;
+                }
+
+                sheet.autoSizeColumn(0);
+                sheet.autoSizeColumn(1);
+                sheet.autoSizeColumn(2);
+                sheet.autoSizeColumn(3);
+                sheet.autoSizeColumn(4);
+                sheet.autoSizeColumn(5);
+
+                sheet.setZoom(150);
+                Date date = new Date();
+                String strDateFormat = "yyyy-MM-dd";
+                DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
+                String formattedDate = dateFormat.format(date);
+
+                try (FileOutputStream fileOut = new FileOutputStream("ReporteInventario " + formattedDate + ".xlsx")) {
+                    book.write(fileOut);
+                }
+
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException | SQLException ex) {
+                Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controlador;
 
 import inventario.ComboBoxHelper;
@@ -42,8 +37,7 @@ import vista.FrmSalida;
  * @author Administrator
  */
 public final class CtlrMovimiento implements ActionListener {
-    
-    
+
     private String code;
     private final Movimiento movimiento;
     private int idcliente1;
@@ -124,7 +118,7 @@ public final class CtlrMovimiento implements ActionListener {
         this.vsalida.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                
+                agregarCliente();
                 limpiarSalidas(modelol2s);
             }
         });
@@ -229,6 +223,7 @@ public final class CtlrMovimiento implements ActionListener {
         int index = vsalida.lstCliente.getSelectedIndex();
         ListHelper cliente = (ListHelper) modelocliente.getElementAt(index);
         idcliente1 = cliente.getId();
+        System.out.println(idcliente1);
     }
 
     public void llenarListaClientes(DefaultListModel modelo) {
@@ -267,6 +262,7 @@ public final class CtlrMovimiento implements ActionListener {
             modelotben.addRow(array);
         }
     }
+
     public void llenarComboBox() {
         cbxmodelo.removeAllElements();
         ArrayList<ComboBoxHelper> clientes = cmovimiento.getComboBoxClientes();
@@ -274,6 +270,7 @@ public final class CtlrMovimiento implements ActionListener {
             cbxmodelo.addElement(clientes.get(i));
         }
     }
+
     public void llenarTablaBodega() {
         limpiarSalidas(modelol1s);
         ArrayList<Producto> prods = cmovimiento.getProductosBodega();
@@ -286,220 +283,241 @@ public final class CtlrMovimiento implements ActionListener {
             modelol1s.addRow(array);
         }
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
+
         if (e.getSource() == vmovimiento.btnSalida) {
             vsalida.setVisible(true);
             llenarListaClientes(modelocliente);
             llenarTablaBodega();
             limpiarSalidas(modelol2s);
-        } else {
-            if (e.getSource() == vmovimiento.btnEntrada) {
-                ventrada.setVisible(true);
-                llenarListaClientes(modeloclientes);
+
+        } else if (e.getSource() == vmovimiento.btnEntrada) {
+
+            ventrada.setVisible(true);
+            llenarListaClientes(modeloclientes);
+            limpiarSalidas(modelol1e);
+            limpiarSalidas(modelol2e);
+
+        } else if (e.getSource() == vsalida.btnSumarSalida) {
+
+            try {
+                int fila = vsalida.jtbP1Salida.getSelectedRow();
+                if (Integer.parseInt(vsalida.jtbP1Salida.getValueAt(fila, 2).toString()) >= Integer.parseInt(vsalida.txtCantidadSalida.getText())) {
+                    String codigo = vsalida.jtbP1Salida.getValueAt(fila, 0).toString();
+                    for (int i = 0; i < modelol2s.getRowCount(); i++) {
+                        if (codigo.equals(vsalida.jtbP2Salida.getValueAt(i, 0).toString())) {
+                            modelol2s.removeRow(i);
+                            break;
+                        }
+                    }
+                    Producto p = cmovimiento.getProductoByCodigo(codigo);
+
+                    Object[] array = new Object[3];
+                    array[0] = p.getCodigo();
+                    array[1] = p.getNombre();
+                    array[2] = vsalida.txtCantidadSalida.getText();
+
+                    modelol2s.addRow(array);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Cantidad no disponible");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println(ex);
+            }
+
+        } else if (e.getSource() == vsalida.btnAceptarSalida) {
+
+            try {
+                movimiento.setCodigo(vsalida.txtCodigoSalida.getText());
+                String fecha = vsalida.txtFechaSalida.getText();
+                Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
+                movimiento.setFecha(date);
+                movimiento.setTipo("salida");
+                movimiento.setObservaciones(vsalida.txtObservacionesSalida.getText());
+                movimiento.setUbicacion(idcliente1);
+                if (cmovimiento.insertar(movimiento)) {
+                    int idmov = cmovimiento.getIDByCode(vsalida.txtCodigoSalida.getText());
+                    for (int i = 0; i < modelol2s.getRowCount(); i++) {
+                        MovimientoProducto movprod = new MovimientoProducto();
+                        movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
+                        movprod.setMovimiento(idmov);
+                        movprod.setCantidad(Integer.parseInt(modelol2s.getValueAt(i, 2).toString()));
+                        int cantidad = movprod.getCantidad();
+                        cmovimiento.restarBodega(cantidad, cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
+                        cmovimiento.insertarMovimientoProducto(movprod);
+                        if (cmovimiento.verificar(movprod.getActivo(), idcliente1)) {
+                            cmovimiento.sumarUbicacionProducto(cantidad, movprod.getActivo(), idcliente1);
+                        } else {
+                            cmovimiento.insertarUbicacionProducto(idcliente1, cantidad, movprod.getActivo());
+                        }
+                    }
+                    ctlrbodega.llenarTabla();
+                    llenarTablaSalidas();
+                    llenarTablaBodega();
+                    limpiarSalidas(modelol2s);
+                    JOptionPane.showMessageDialog(null, "Salida agregada");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
+                }
+            } catch (ParseException ex) {
+                System.out.println(ex);
+            }
+
+        } else if (e.getSource() == vsalida.btnRestarSalida) {
+
+            int row = vsalida.jtbP2Salida.getSelectedRow();
+            modelol2s.removeRow(row);
+        } else if (e.getSource() == ventrada.btnSumarEntrada) {
+
+            try {
+                int fila = ventrada.jtbP1Entrada.getSelectedRow();
+                if (Integer.parseInt(ventrada.jtbP1Entrada.getValueAt(fila, 2).toString()) >= Integer.parseInt(ventrada.txtCantidadEntrada.getText())) {
+                    String codigo = ventrada.jtbP1Entrada.getValueAt(fila, 0).toString();
+                    for (int i = 0; i < modelol2e.getRowCount(); i++) {
+                        if (codigo.equals(ventrada.jtbP2Entrada.getValueAt(i, 0).toString())) {
+                            modelol2e.removeRow(i);
+                            break;
+                        }
+                    }
+                    Producto p = cmovimiento.getProductoByCodigo(codigo);
+
+                    Object[] array = new Object[3];
+                    array[0] = p.getCodigo();
+                    array[1] = p.getNombre();
+                    array[2] = ventrada.txtCantidadEntrada.getText();
+
+                    modelol2e.addRow(array);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Cantidad no disponible");
+                }
+            } catch (NumberFormatException ex) {
+                System.out.println(ex);
+            }
+
+        } else if (e.getSource() == ventrada.btnAceptarEntrada) {
+
+            try {
+                movimiento.setCodigo(ventrada.txtCodigoEntrada.getText());
+                String fecha = ventrada.txtFechaEntrada.getText();
+                Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
+                movimiento.setFecha(date);
+                movimiento.setTipo("entrada");
+                movimiento.setObservaciones(ventrada.txtObservacionesEntrada.getText());
+                movimiento.setUbicacion(idcliente2);
+                cmovimiento.insertar(movimiento);
+                int idmov = cmovimiento.getIDByCode(ventrada.txtCodigoEntrada.getText());
+                for (int i = 0; i < modelol2e.getRowCount(); i++) {
+                    MovimientoProducto movprod = new MovimientoProducto();
+                    movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2e.getValueAt(i, 0).toString()).getId());
+                    movprod.setMovimiento(idmov);
+                    movprod.setCantidad(Integer.parseInt(modelol2e.getValueAt(i, 2).toString()));
+                    int cantidad = movprod.getCantidad();
+                    cmovimiento.restarCliente(cantidad, idcliente2, movprod.getActivo());
+                    cmovimiento.insertarMovimientoProducto(movprod);
+                    cmovimiento.sumarBodega(cantidad, movprod.getActivo());
+                }
+                llenarTablaEntradas();
                 limpiarSalidas(modelol1e);
                 limpiarSalidas(modelol2e);
+                JOptionPane.showMessageDialog(null, "Entrada agregada");
+            } catch (ParseException ex) {
+                System.out.println(ex);
+            }
 
+        } else if (e.getSource() == ventrada.btnRestarEntrada) {
+
+            int row = ventrada.jtbP2Entrada.getSelectedRow();
+            modelol2e.removeRow(row);
+        } else if (e.getSource() == vmovimiento.btnReporteEntrada) {
+
+            try {
+                JasperReport reporte = null;
+                String path = "src\\reporte\\ReporteEntradas.jasper";
+                Map parametros = new HashMap();
+                int fila = vmovimiento.jtbEntradas.getSelectedRow();
+                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0));
+                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
+                JasperViewer view = new JasperViewer(jprint, false);
+                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                view.setVisible(true);
+            } catch (JRException ex) {
+                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (e.getSource() == vmovimiento.btnReporteSalida) {
+
+            try {
+                JasperReport reporte = null;
+                String path = "src\\reporte\\ReporteSalidas.jasper";
+                Map parametros = new HashMap();
+                int fila = vmovimiento.jtbSalida.getSelectedRow();
+                parametros.put("codigo", vmovimiento.jtbSalida.getValueAt(fila, 0));
+                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
+                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
+                JasperViewer view = new JasperViewer(jprint, false);
+                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                view.setVisible(true);
+            } catch (JRException ex) {
+                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (e.getSource() == vmovimiento.btnModificarSalida) {
+
+            int row = vmovimiento.jtbSalida.getSelectedRow();
+            if (row != (-1)) {
+                code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
+                cmovimiento.getMovimiento(code, movimiento);
+                vmodsalida.setVisible(true);
+                llenarComboBox();
+                vmodsalida.txtModCodigoS.setText(movimiento.getCodigo());
+                vmodsalida.txtModFechaS.setText(movimiento.getFecha() + "");
+                vmodsalida.txtModObservacionesS.setText(movimiento.getObservaciones());
+                limpiarSalidas(modelomods);
+                vmodsalida.cbxModClienteS.getModel().setSelectedItem(new ComboBoxHelper(cmovimiento.getIdClienteByName(vmovimiento.jtbSalida.getValueAt(row, 2).toString()), vmovimiento.jtbSalida.getValueAt(row, 2).toString()));
+                for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
+                    modelomods.addRow(new Object[]{vmovimiento.jtbProSalidas.getValueAt(i, 0), vmovimiento.jtbProSalidas.getValueAt(i, 2)});
+                }
+                ArrayList<Producto> bodega = cmovimiento.getProductosBodega();
+                for (int i = 0; i < bodega.size(); i++) {
+                    modelolmods.addRow(new Object[]{bodega.get(i).getCodigo(), bodega.get(i).getStock()});
+                }
             } else {
-                if (e.getSource() == vsalida.btnSumarSalida) {
-                    try {
-                        int fila = vsalida.jtbP1Salida.getSelectedRow();
-                        if (Integer.parseInt(vsalida.jtbP1Salida.getValueAt(fila, 2).toString()) >= Integer.parseInt(vsalida.txtCantidadSalida.getText())) {
-                            String codigo = vsalida.jtbP1Salida.getValueAt(fila, 0).toString();
-                            for (int i = 0; i < modelol2s.getRowCount(); i++) {
-                                if (codigo.equals(vsalida.jtbP2Salida.getValueAt(i, 0).toString())) {
-                                    modelol2s.removeRow(i);
-                                    break;
-                                }
-                            }
-                            Producto p = cmovimiento.getProductoByCodigo(codigo);
+                JOptionPane.showMessageDialog(null, "No selecciono ningún movimiento");
+            }
+        } else if (e.getSource() == vmodsalida.btnAceptarMod) {
 
-                            Object[] array = new Object[3];
-                            array[0] = p.getCodigo();
-                            array[1] = p.getNombre();
-                            array[2] = vsalida.txtCantidadSalida.getText();
-
-                            modelol2s.addRow(array);
-                        } else {
-                            JOptionPane.showMessageDialog(null, "Cantidad no disponible");
-                        }
-                    } catch (NumberFormatException ex) {
-                        System.out.println(ex);
-                    }
-                } else {
-                    if (e.getSource() == vsalida.btnAceptarSalida) {
-                        try {
-                            movimiento.setCodigo(vsalida.txtCodigoSalida.getText());
-                            String fecha = vsalida.txtFechaSalida.getText();
-                            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
-                            movimiento.setFecha(date);
-                            movimiento.setTipo("salida");
-                            movimiento.setObservaciones(vsalida.txtObservacionesSalida.getText());
-                            movimiento.setUbicacion(idcliente1);
-                            if (cmovimiento.insertar(movimiento)) {
-                                int idmov = cmovimiento.getIDByCode(vsalida.txtCodigoSalida.getText());
-                                for (int i = 0; i < modelol2s.getRowCount(); i++) {
-                                    MovimientoProducto movprod = new MovimientoProducto();
-                                    movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
-                                    movprod.setMovimiento(idmov);
-                                    movprod.setCantidad(Integer.parseInt(modelol2s.getValueAt(i, 2).toString()));
-                                    int cantidad = movprod.getCantidad();
-                                    cmovimiento.restarBodega(cantidad, cmovimiento.getProductoByCodigo(modelol2s.getValueAt(i, 0).toString()).getId());
-                                    cmovimiento.insertarMovimientoProducto(movprod);
-                                    if (cmovimiento.verificar(movprod.getActivo(), idcliente1)) {
-                                        cmovimiento.sumarUbicacionProducto(cantidad, movprod.getActivo(), idcliente1);
-                                    } else {
-                                        cmovimiento.insertarUbicacionProducto(idcliente1, cantidad, movprod.getActivo());
-                                    }
-                                }
-                                ctlrbodega.llenarTabla();
-                                llenarTablaSalidas();
-                                llenarTablaBodega();
-                                limpiarSalidas(modelol2s);
-                                JOptionPane.showMessageDialog(null, "Salida agregada");
-                            } else {
-                                JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
-                            }
-                        } catch (ParseException ex) {
-                            System.out.println(ex);
-                        }
+            for (int i = 0; i < modelomods.getRowCount(); i++) {
+                cmovimiento.sumarBodega((int) vmovimiento.jtbProSalidas.getValueAt(i, 2), cmovimiento.getIDByCode(vmovimiento.jtbProSalidas.getValueAt(i, 0).toString()));
+                cmovimiento.restarCliente(i, cmovimiento.getIdClienteByName(vmovimiento.jtbSalida.getValueAt(i, 2).toString()), (int) vmovimiento.jtbProSalidas.getValueAt(i, 2));
+            }
+            cmovimiento.borrarMovimientos(code);
+            System.out.println(code);
+            String fecha = vmodsalida.txtModFechaS.getText();
+            Date date = null;
+            try {
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
+            } catch (ParseException ex) {
+                System.out.println(ex);
+            }
+            movimiento.setFecha(date);
+            movimiento.setObservaciones(vmodsalida.txtModObservacionesS.getText());
+            ComboBoxHelper ub = (ComboBoxHelper) vmodsalida.cbxModClienteS.getSelectedItem();
+            movimiento.setUbicacion(ub.getId());
+            if (cmovimiento.updateMovimiento(movimiento, cmovimiento.getIDByCode(vmodsalida.txtModCodigoS.getText()))) {
+                int idmov = cmovimiento.getIDByCode(vmodsalida.txtModCodigoS.getText());
+                for (int i = 0; i < vmodsalida.jtbModProductosS.getRowCount(); i++) {
+                    MovimientoProducto movprod = new MovimientoProducto();
+                    movprod.setActivo(cmovimiento.getProductoByCodigo(modelomods.getValueAt(i, 0).toString()).getId());
+                    movprod.setMovimiento(idmov);
+                    movprod.setCantidad(Integer.parseInt(modelomods.getValueAt(i, 1).toString()));
+                    int cantidad = movprod.getCantidad();
+                    cmovimiento.restarBodega(cantidad, cmovimiento.getProductoByCodigo(modelomods.getValueAt(i, 0).toString()).getId());
+                    cmovimiento.insertarMovimientoProducto(movprod);
+                    if (cmovimiento.verificar(movprod.getActivo(), idcliente1)) {
+                        cmovimiento.sumarUbicacionProducto(cantidad, movprod.getActivo(), movimiento.getUbicacion());
                     } else {
-                        if (e.getSource() == vsalida.btnRestarSalida) {
-                            int row = vsalida.jtbP2Salida.getSelectedRow();
-                            modelol2s.removeRow(row);
-                        } else {
-                            if (e.getSource() == ventrada.btnSumarEntrada) {
-                                try {
-                                    int fila = ventrada.jtbP1Entrada.getSelectedRow();
-                                    if (Integer.parseInt(ventrada.jtbP1Entrada.getValueAt(fila, 2).toString()) >= Integer.parseInt(ventrada.txtCantidadEntrada.getText())) {
-                                        String codigo = ventrada.jtbP1Entrada.getValueAt(fila, 0).toString();
-                                        for (int i = 0; i < modelol2e.getRowCount(); i++) {
-                                            if (codigo.equals(ventrada.jtbP2Entrada.getValueAt(i, 0).toString())) {
-                                                modelol2e.removeRow(i);
-                                                break;
-                                            }
-                                        }
-                                        Producto p = cmovimiento.getProductoByCodigo(codigo);
-
-                                        Object[] array = new Object[3];
-                                        array[0] = p.getCodigo();
-                                        array[1] = p.getNombre();
-                                        array[2] = ventrada.txtCantidadEntrada.getText();
-
-                                        modelol2e.addRow(array);
-                                    } else {
-                                        JOptionPane.showMessageDialog(null, "Cantidad no disponible");
-                                    }
-                                } catch (NumberFormatException ex) {
-                                    System.out.println(ex);
-                                }
-                            } else {
-                                if (e.getSource() == ventrada.btnAceptarEntrada) {
-                                    try {
-                                        movimiento.setCodigo(ventrada.txtCodigoEntrada.getText());
-                                        String fecha = ventrada.txtFechaEntrada.getText();
-                                        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
-                                        movimiento.setFecha(date);
-                                        movimiento.setTipo("entrada");
-                                        movimiento.setObservaciones(ventrada.txtObservacionesEntrada.getText());
-                                        movimiento.setUbicacion(idcliente2);
-                                        cmovimiento.insertar(movimiento);
-                                        int idmov = cmovimiento.getIDByCode(ventrada.txtCodigoEntrada.getText());
-                                        for (int i = 0; i < modelol2e.getRowCount(); i++) {
-                                            MovimientoProducto movprod = new MovimientoProducto();
-                                            movprod.setActivo(cmovimiento.getProductoByCodigo(modelol2e.getValueAt(i, 0).toString()).getId());
-                                            movprod.setMovimiento(idmov);
-                                            movprod.setCantidad(Integer.parseInt(modelol2e.getValueAt(i, 2).toString()));
-                                            int cantidad = movprod.getCantidad();
-                                            cmovimiento.restarCliente(cantidad, idcliente2, movprod.getActivo());
-                                            cmovimiento.insertarMovimientoProducto(movprod);
-                                            cmovimiento.sumarBodega(cantidad, movprod.getActivo());
-                                        }
-                                        llenarTablaEntradas();
-                                        limpiarSalidas(modelol1e);
-                                        limpiarSalidas(modelol2e);
-                                        JOptionPane.showMessageDialog(null, "Entrada agregada");
-                                    } catch (ParseException ex) {
-                                        System.out.println(ex);
-                                    }
-                                } else {
-                                    if (e.getSource() == ventrada.btnRestarEntrada) {
-                                        int row = ventrada.jtbP2Entrada.getSelectedRow();
-                                        modelol2e.removeRow(row);
-                                    } else {
-                                        if (e.getSource() == vmovimiento.btnReporteEntrada) {
-                                            try {
-                                                JasperReport reporte = null;
-                                                String path = "src\\reporte\\ReporteEntradas.jasper";
-                                                Map parametros = new HashMap();
-                                                int fila = vmovimiento.jtbEntradas.getSelectedRow();
-                                                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0));
-                                                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-                                                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-                                                JasperViewer view = new JasperViewer(jprint, false);
-                                                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                                                view.setVisible(true);
-                                            } catch (JRException ex) {
-                                                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-                                            }
-                                        } else {
-                                            if (e.getSource() == vmovimiento.btnReporteSalida) {
-                                                try {
-                                                    JasperReport reporte = null;
-                                                    String path = "src\\reporte\\ReporteSalidas.jasper";
-                                                    Map parametros = new HashMap();
-                                                    int fila = vmovimiento.jtbSalida.getSelectedRow();
-                                                    parametros.put("codigo", vmovimiento.jtbSalida.getValueAt(fila, 0));
-                                                    reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-                                                    JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-                                                    JasperViewer view = new JasperViewer(jprint, false);
-                                                    view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                                                    view.setVisible(true);
-                                                } catch (JRException ex) {
-                                                    Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-                                                }
-                                            } else {
-                                                if (e.getSource() == vmovimiento.btnModificarSalida) {
-                                                    int row = vmovimiento.jtbSalida.getSelectedRow();
-                                                    if (row != (-1)){
-                                                        code = vmovimiento.jtbSalida.getValueAt(row, 0).toString();
-                                                        cmovimiento.getMovimiento(code, movimiento);
-                                                        vmodsalida.setVisible(true);
-                                                        llenarComboBox();
-                                                        vmodsalida.txtModCodigoS.setText(movimiento.getCodigo());
-                                                        vmodsalida.txtModFechaS.setText(movimiento.getFecha()+"");
-                                                        vmodsalida.txtModObservacionesS.setText(movimiento.getObservaciones());
-                                                        limpiarSalidas(modelomods);
-                                                        vmodsalida.cbxModClienteS.getModel().setSelectedItem(new ComboBoxHelper(movimiento.getId(), vmovimiento.jtbSalida.getValueAt(row, 2).toString()));
-                                                        for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
-                                                            modelomods.addRow(new Object[]{vmovimiento.jtbProSalidas.getValueAt(i,0), vmovimiento.jtbProSalidas.getValueAt(i, 2)});
-                                                        }
-                                                        ArrayList<Producto> bodega = cmovimiento.getProductosBodega();
-                                                        for (int i = 0; i < bodega.size(); i++) { 
-                                                            modelolmods.addRow(new Object[]{bodega.get(i).getCodigo(), bodega.get(i).getStock()});
-                                                        }
-                                                    }else{
-                                                        JOptionPane.showMessageDialog(null, "No selecciono ningún movimiento");
-                                                    }
-                                                } else {
-                                                    if (e.getSource() == vmodsalida.btnAceptarMod) {
-                                                        for (int i = 0; i < vmovimiento.jtbProSalidas.getRowCount(); i++) {
-                                                            
-                                                        }
-                                                        cmovimiento.borrarMovimientos(code);
-                                                        
-                                                        for (int i = 0; i < vmodsalida.jtbModProductosS.getRowCount(); i++) {
-                                                            
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        cmovimiento.insertarUbicacionProducto(movimiento.getUbicacion(), cantidad, movprod.getActivo());
                     }
                 }
             }
