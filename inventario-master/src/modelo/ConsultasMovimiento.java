@@ -281,6 +281,7 @@ public class ConsultasMovimiento extends Conexion {
             if (rs.next()) {
                 id = rs.getInt("identrada");
             }
+            System.out.println("El id del producto es: "+id);
             return id;
         } catch (SQLException e) {
             System.out.println(e);
@@ -299,13 +300,15 @@ public class ConsultasMovimiento extends Conexion {
         Connection con = getConnection();
 
         String sql = "UPDATE bodega SET cantidad = cantidad+? WHERE idproducto=?";
-
+        System.out.println("cantidad a sumar: "+cantidad);
+        System.out.println("producto a sumar: "+id);
         try {
             ps = con.prepareStatement(sql);
             ps.setInt(1, cantidad);
             ps.setInt(2, id);
 
             ps.execute();
+            System.out.println("sumado");
             return true;
         } catch (SQLException e) {
             System.out.println(e);
@@ -336,7 +339,6 @@ public class ConsultasMovimiento extends Conexion {
             while (rs.next()) {
                 Movimiento mov = new Movimiento();
                 mov.setId(rs.getInt("identrada"));
-                System.out.println(rs.getDate("fecha").toLocalDate());
                 mov.setFecha(rs.getDate("fecha"));
                 mov.setCodigo(rs.getString("codigo"));
                 mov.setUbicacion(rs.getInt("idubicacion"));
@@ -657,7 +659,6 @@ public class ConsultasMovimiento extends Conexion {
         String sql = "DELETE FROM movimiento_productos WHERE idmovimiento=?";
         try {
             ps = con.prepareStatement(sql);
-            System.out.println(getIDByCode(codigo));
             ps.setInt(1, getIDByCode(codigo));
             ps.execute();
 

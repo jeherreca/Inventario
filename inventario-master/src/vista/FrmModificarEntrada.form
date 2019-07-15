@@ -44,7 +44,7 @@
                           <Component id="jScrollPane1" pref="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                              <Component id="btnRemoverModSalida" min="-2" pref="121" max="-2" attributes="0"/>
+                              <Component id="btnRemoverModEntrada" min="-2" pref="121" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -60,14 +60,14 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="txtModCodigoS" min="-2" pref="143" max="-2" attributes="0"/>
-                                  <Component id="txtModFechaS" min="-2" pref="143" max="-2" attributes="0"/>
+                                  <Component id="txtModCodigoE" min="-2" pref="143" max="-2" attributes="0"/>
+                                  <Component id="txtModFechaE" min="-2" pref="143" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="cbxModClienteS" min="-2" pref="331" max="-2" attributes="0"/>
+                              <Component id="cbxModClienteE" min="-2" pref="331" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -82,12 +82,12 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtModCodigoS" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtModCodigoE" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="txtModFechaS" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtModFechaE" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
@@ -95,7 +95,7 @@
               <Component id="jScrollPane2" min="-2" pref="117" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="cbxModClienteS" min="-2" max="-2" attributes="0"/>
+                  <Component id="cbxModClienteE" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -116,9 +116,9 @@
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnRemoverModSalida" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnAceptarMod" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="btnRemoverModEntrada" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnAceptarMod" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -158,7 +158,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jtbModProductosS">
+        <Component class="javax.swing.JTable" name="jtbModProductosE">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
@@ -182,7 +182,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTextArea" name="txtModObservacionesS">
+        <Component class="javax.swing.JTextArea" name="txtModObservacionesE">
           <Properties>
             <Property name="columns" type="int" value="20"/>
             <Property name="rows" type="int" value="5"/>
@@ -193,17 +193,17 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JTextField" name="txtModCodigoS">
+    <Component class="javax.swing.JTextField" name="txtModCodigoE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtModFechaS">
+    <Component class="javax.swing.JTextField" name="txtModFechaE">
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JComboBox" name="cbxModClienteS">
+    <Component class="javax.swing.JComboBox" name="cbxModClienteE">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="4">
@@ -247,7 +247,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="jtbBodega">
+        <Component class="javax.swing.JTable" name="jtbClientes">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
@@ -264,7 +264,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btnRemoverModSalida">
+    <Component class="javax.swing.JButton" name="btnRemoverModEntrada">
       <Properties>
         <Property name="text" type="java.lang.String" value="Remover producto"/>
       </Properties>

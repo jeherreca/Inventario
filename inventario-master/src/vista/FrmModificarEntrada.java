@@ -9,12 +9,12 @@ package vista;
  *
  * @author Administrator
  */
-public class FrmModificarSalida extends javax.swing.JFrame {
+public class FrmModificarEntrada extends javax.swing.JFrame {
 
     /**
      * Creates new form FrmModificar
      */
-    public FrmModificarSalida() {
+    public FrmModificarEntrada() {
         initComponents();
     }
 
@@ -33,18 +33,18 @@ public class FrmModificarSalida extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jtbModProductosS = new javax.swing.JTable();
+        jtbModProductosE = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        txtModObservacionesS = new javax.swing.JTextArea();
-        txtModCodigoS = new javax.swing.JTextField();
-        txtModFechaS = new javax.swing.JTextField();
-        cbxModClienteS = new javax.swing.JComboBox<>();
+        txtModObservacionesE = new javax.swing.JTextArea();
+        txtModCodigoE = new javax.swing.JTextField();
+        txtModFechaE = new javax.swing.JTextField();
+        cbxModClienteE = new javax.swing.JComboBox<>();
         btnAceptarMod = new javax.swing.JButton();
         btnSumarProducto = new javax.swing.JButton();
         txtModCantidad = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jtbBodega = new javax.swing.JTable();
-        btnRemoverModSalida = new javax.swing.JButton();
+        jtbClientes = new javax.swing.JTable();
+        btnRemoverModEntrada = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -58,7 +58,7 @@ public class FrmModificarSalida extends javax.swing.JFrame {
 
         jLabel5.setText("Productos:");
 
-        jtbModProductosS.setModel(new javax.swing.table.DefaultTableModel(
+        jtbModProductosE.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -69,19 +69,19 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jtbModProductosS);
+        jScrollPane1.setViewportView(jtbModProductosE);
 
-        txtModObservacionesS.setColumns(20);
-        txtModObservacionesS.setRows(5);
-        jScrollPane2.setViewportView(txtModObservacionesS);
+        txtModObservacionesE.setColumns(20);
+        txtModObservacionesE.setRows(5);
+        jScrollPane2.setViewportView(txtModObservacionesE);
 
-        cbxModClienteS.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbxModClienteE.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         btnAceptarMod.setText("Modificar salida");
 
         btnSumarProducto.setText(">>");
 
-        jtbBodega.setModel(new javax.swing.table.DefaultTableModel(
+        jtbClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -92,9 +92,9 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane3.setViewportView(jtbBodega);
+        jScrollPane3.setViewportView(jtbClientes);
 
-        btnRemoverModSalida.setText("Remover producto");
+        btnRemoverModEntrada.setText("Remover producto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -118,7 +118,7 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnRemoverModSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(btnRemoverModEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -130,12 +130,12 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                                     .addComponent(jLabel2))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtModCodigoS, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtModFechaS, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txtModCodigoE, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtModFechaE, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cbxModClienteS, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(cbxModClienteE, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -144,18 +144,18 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(txtModCodigoS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtModCodigoE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txtModFechaS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtModFechaE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbxModClienteS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbxModClienteE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
@@ -171,8 +171,8 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRemoverModSalida)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRemoverModEntrada)
                     .addComponent(btnAceptarMod))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -186,9 +186,9 @@ public class FrmModificarSalida extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAceptarMod;
-    public javax.swing.JButton btnRemoverModSalida;
+    public javax.swing.JButton btnRemoverModEntrada;
     public javax.swing.JButton btnSumarProducto;
-    public javax.swing.JComboBox<String> cbxModClienteS;
+    public javax.swing.JComboBox<String> cbxModClienteE;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -197,11 +197,11 @@ public class FrmModificarSalida extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    public javax.swing.JTable jtbBodega;
-    public javax.swing.JTable jtbModProductosS;
+    public javax.swing.JTable jtbClientes;
+    public javax.swing.JTable jtbModProductosE;
     public javax.swing.JTextField txtModCantidad;
-    public javax.swing.JTextField txtModCodigoS;
-    public javax.swing.JTextField txtModFechaS;
-    public javax.swing.JTextArea txtModObservacionesS;
+    public javax.swing.JTextField txtModCodigoE;
+    public javax.swing.JTextField txtModFechaE;
+    public javax.swing.JTextArea txtModObservacionesE;
     // End of variables declaration//GEN-END:variables
 }

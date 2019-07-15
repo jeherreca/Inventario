@@ -361,7 +361,7 @@ public final class CtlrUbicacion implements ActionListener {
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
 
-                FileOutputStream fileOut = new FileOutputStream("Reporte" + nombreCliente + " " + formattedDate + ".xlsx");
+                FileOutputStream fileOut = new FileOutputStream("excel\\Reporte" + nombreCliente + " " + formattedDate + ".xlsx");
                 book.write(fileOut);
                 fileOut.close();
 

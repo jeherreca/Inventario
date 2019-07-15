@@ -353,7 +353,7 @@ public final class CtlrProducto implements ActionListener {
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
 
-                try (FileOutputStream fileOut = new FileOutputStream("ReporteInventario " + formattedDate + ".xlsx")) {
+                try (FileOutputStream fileOut = new FileOutputStream("excel\\ReporteInventario " + formattedDate + ".xlsx")) {
                     book.write(fileOut);
                 }
 
