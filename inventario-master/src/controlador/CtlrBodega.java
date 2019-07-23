@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import javax.swing.table.DefaultTableModel;
 import modelo.ConsultasBodega;
@@ -225,15 +226,16 @@ public final class CtlrBodega implements ActionListener {
                 String strDateFormat = "yyyy-MM-dd";
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
-
                 FileOutputStream fileOut = new FileOutputStream("excel\\ReporteBodega " + formattedDate + ".xlsx");
                 book.write(fileOut);
-                fileOut.close();
-
+                fileOut.close();                   
+                
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex);
             } catch (IOException | SQLException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, ex);
             }
 
         }
