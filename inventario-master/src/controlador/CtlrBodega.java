@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +22,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -73,8 +77,11 @@ public final class CtlrBodega implements ActionListener {
         this.vbodega.jtbBodega.setDefaultEditor(Object.class, null);
         llenarTabla();
         this.vbodega.jtbBodega.setModel(modelo);
-        this.vbodega.btnReporteBodega.addActionListener(this);
         this.vbodega.btnExcelBodega.addActionListener(this);
+        this.vbodega.btnBuscarBodega.addActionListener(this);
+        this.vbodega.txtCantidadBodega.setEditable(false);
+        this.vbodega.txtDescBodega.setEditable(false);
+        this.vbodega.txtNombreBodega.setEditable(false);
     }
 
     public ConsultasBodega getCbodega() {
@@ -84,13 +91,17 @@ public final class CtlrBodega implements ActionListener {
     public void setCbodega(ConsultasBodega cbodega) {
         this.cbodega = cbodega;
     }
-
+    public void llenarLabels() {
+        vbodega.lblCantidadBodega.setText(cbodega.getSum()+"");
+        vbodega.lblPesoBodega.setText(cbodega.getSumPeso()+"");
+    }
     public void llenarTabla() {
         limpiarTablaBodega();
         ArrayList<Object[]> proveedores = cbodega.getBodegas();
         for (int i = 0; i < proveedores.size(); i++) {
             modelo.addRow(proveedores.get(i));
         }
+        llenarLabels();
     }
 
     public void limpiarTablaBodega() {
@@ -102,26 +113,7 @@ public final class CtlrBodega implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //**Boton reporte**
-        if (e.getSource() == vbodega.btnReporteBodega) {
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteBodega.jasper";
-
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cbodega.getConexion());
-
-                JasperViewer view = new JasperViewer(jprint, false);
-
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            //**Boton excel**
-        } else if (e.getSource() == vbodega.btnExcelBodega) {
+        if (e.getSource() == vbodega.btnExcelBodega) {
 
             Workbook book = new XSSFWorkbook();
             Sheet sheet = book.createSheet("Productos");
@@ -155,9 +147,9 @@ public final class CtlrBodega implements ActionListener {
                 celdaTitulo.setCellStyle(tituloEstilo);
                 celdaTitulo.setCellValue("Lista de materiales en bodega");
 
-                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 3));
+                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 4));
 
-                String[] cabecera = {"Código", "Nombre", "Descripción", "Cantidad", "Marca"};
+                String[] cabecera = {"Código", "Nombre", "Marca", "Cantidad", "Peso Unitario", "Peso Total"};
 
                 CellStyle headerStyle = book.createCellStyle();
                 headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
@@ -194,7 +186,7 @@ public final class CtlrBodega implements ActionListener {
                 datosEstilo.setBorderTop(BorderStyle.THIN);
                 datosEstilo.setBorderRight(BorderStyle.THIN);
 
-                String sql = "SELECT activo.codigo, activo.nombre, activo.descripcion, bodega.cantidad, marca.nombre AS marca FROM ((inventario.bodega JOIN inventario.activo ON bodega.idproducto = activo.idproductos) JOIN inventario.marca ON activo.idmarca = marca.idmarca )";
+                String sql = "SELECT activo.codigo, activo.nombre, marca.nombre as marca, bodega.cantidad, activo.peso, activo.peso*bodega.cantidad as pesoTotal FROM ((inventario.bodega JOIN inventario.activo ON bodega.idproducto = activo.idproductos) JOIN inventario.marca ON activo.idmarca = marca.idmarca )";
                 ps = con.prepareStatement(sql);
                 rs = ps.executeQuery();
 
@@ -206,7 +198,7 @@ public final class CtlrBodega implements ActionListener {
                         Cell celdaDatos = filaDatos.createCell(i);
                         celdaDatos.setCellStyle(datosEstilo);
 
-                        if (i == 3) {
+                        if (i == 4 || i==5 || i==3) {
                             celdaDatos.setCellValue(rs.getDouble(i + 1));
                         } else {
                             celdaDatos.setCellValue(rs.getString(i + 1));
@@ -220,16 +212,18 @@ public final class CtlrBodega implements ActionListener {
                 sheet.autoSizeColumn(2);
                 sheet.autoSizeColumn(3);
                 sheet.autoSizeColumn(4);
+                sheet.autoSizeColumn(5);
 
                 sheet.setZoom(150);
                 Date date = new Date();
-                String strDateFormat = "yyyy-MM-dd";
+                String strDateFormat = "yyyy-MM-dd HHmmss";
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
                 FileOutputStream fileOut = new FileOutputStream("excel\\ReporteBodega " + formattedDate + ".xlsx");
                 book.write(fileOut);
                 fileOut.close();                   
                 
+                JOptionPane.showMessageDialog(null, "El archivo ha sido creado");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
                 JOptionPane.showMessageDialog(null, ex);
@@ -238,6 +232,15 @@ public final class CtlrBodega implements ActionListener {
                 JOptionPane.showMessageDialog(null, ex);
             }
 
+        } else if (e.getSource() == vbodega.btnBuscarBodega){
+            String[] respuesta = new String[3];
+            if (cbodega.buscar(vbodega.txtCodigoBodega.getText(), respuesta)) {
+                vbodega.txtNombreBodega.setText(respuesta[0]);
+                vbodega.txtDescBodega.setText(respuesta[1]);
+                vbodega.txtCantidadBodega.setText(respuesta[2]);
+            }else{
+                JOptionPane.showMessageDialog(null, "No se pudo encontrar el producto buscado");
+            }
         }
     }
 }

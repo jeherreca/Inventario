@@ -4,6 +4,8 @@ import inventario.ComboBoxHelper;
 import inventario.ListHelper;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -147,6 +149,7 @@ public final class CtlrMovimiento implements ActionListener {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 llenarTablaEntradasProd();
+                
             }
         });
         this.ventrada.lstCliente.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -164,8 +167,6 @@ public final class CtlrMovimiento implements ActionListener {
         this.vsalida.btnSumarSalida.addActionListener(this);
         this.ventrada.btnSumarEntrada.addActionListener(this);
         this.ventrada.btnRestarEntrada.addActionListener(this);
-        this.vmovimiento.btnReporteEntrada.addActionListener(this);
-        this.vmovimiento.btnReporteSalida.addActionListener(this);
         this.vmovimiento.btnModificarSalida.addActionListener(this);
         this.vmovimiento.btnModificarEntrada.addActionListener(this);
         this.vmodsalida.btnAceptarMod.addActionListener(this);
@@ -217,7 +218,16 @@ public final class CtlrMovimiento implements ActionListener {
             modelol1e.addRow(array);
         }
     }
-
+    public void llenarLabelsE(String codigo){
+        vmovimiento.txtCantidadEntrada.setText(cmovimiento.getSumMov(codigo) +"");
+        vmovimiento.txtPesoEntrada.setText(cmovimiento.getSumPesoMovProd(codigo) +"");
+        
+    }
+    public void llenarLabelsS(String codigo){
+        vmovimiento.txtCantidadSalida.setText(cmovimiento.getSumMov(codigo) +"");
+        vmovimiento.txtPesoSalida.setText(cmovimiento.getSumPesoMovProd(codigo) +"");
+        
+    }
     public void limpiarSalidas(DefaultTableModel modelo) {
         int size = modelo.getRowCount();
         for (int i = 0; i < size; i++) {
@@ -233,6 +243,7 @@ public final class CtlrMovimiento implements ActionListener {
 
             modelotbpsa.addRow(movprods.get(i));
         }
+        llenarLabelsS(codigo);
     }
 
     public void llenarTablaEntradasProd() {
@@ -242,6 +253,7 @@ public final class CtlrMovimiento implements ActionListener {
         for (int i = 0; i < movprods.size(); i++) {
             modelotbpen.addRow(movprods.get(i));
         }
+        llenarLabelsE(codigo);
     }
 
     public void agregarCliente() {
@@ -267,7 +279,10 @@ public final class CtlrMovimiento implements ActionListener {
 
         for (int i = 0; i < prods.size(); i++) {
             array[0] = prods.get(i).getCodigo();
-            array[1] = prods.get(i).getFecha();
+            Date date = prods.get(i).getFecha();
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            String fecha = format.format(date);
+            array[1] = fecha;
             array[2] = cmovimiento.getUbicacion(prods.get(i).getUbicacion());
             array[3] = prods.get(i).getObservaciones();
             modelotbsa.addRow(array);
@@ -281,7 +296,10 @@ public final class CtlrMovimiento implements ActionListener {
 
         for (int i = 0; i < prods.size(); i++) {
             array[0] = prods.get(i).getCodigo();
-            array[1] = prods.get(i).getFecha();
+            Date date = prods.get(i).getFecha();
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            String fecha = format.format(date);
+            array[1] = fecha;
             array[2] = cmovimiento.getUbicacion(prods.get(i).getUbicacion());
             array[3] = prods.get(i).getObservaciones();
             modelotben.addRow(array);
@@ -361,6 +379,8 @@ public final class CtlrMovimiento implements ActionListener {
             try {
                 movimiento.setCodigo(vsalida.txtCodigoSalida.getText());
                 String fecha = vsalida.txtFechaSalida.getText();
+                Date format = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+                fecha = new SimpleDateFormat("yyyy-MM-dd").format(format);
                 Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
                 movimiento.setFecha(date);
                 movimiento.setTipo("salida");
@@ -386,6 +406,7 @@ public final class CtlrMovimiento implements ActionListener {
                     llenarTablaSalidas();
                     llenarTablaBodega();
                     limpiarSalidas(modelol2s);
+                    vsalida.setVisible(false);
                     JOptionPane.showMessageDialog(null, "Salida agregada");
                 } else {
                     JOptionPane.showMessageDialog(null, "Error, Intente nuevamente");
@@ -440,10 +461,11 @@ public final class CtlrMovimiento implements ActionListener {
             }
 
         } else if (e.getSource() == ventrada.btnAceptarEntrada) {
-
             try {
                 movimiento.setCodigo(ventrada.txtCodigoEntrada.getText());
                 String fecha = ventrada.txtFechaEntrada.getText();
+                Date format = new SimpleDateFormat("dd/MM/yyyy").parse(fecha);
+                fecha = new SimpleDateFormat("yyyy-MM-dd").format(format);
                 Date date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
                 movimiento.setFecha(date);
                 movimiento.setTipo("entrada");
@@ -465,7 +487,9 @@ public final class CtlrMovimiento implements ActionListener {
                 limpiarSalidas(modelol1e);
                 limpiarSalidas(modelol2e);
                 JOptionPane.showMessageDialog(null, "Entrada agregada");
+                ventrada.setVisible(false);
             } catch (ParseException ex) {
+                JOptionPane.showMessageDialog(null, "ERROR: La fecha digitada no es correcta");
                 System.out.println(ex);
             }
 
@@ -481,38 +505,6 @@ public final class CtlrMovimiento implements ActionListener {
                 }
             }
             modelol2e.removeRow(row);
-        } else if (e.getSource() == vmovimiento.btnReporteEntrada) {
-
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteEntradas.jasper";
-                Map parametros = new HashMap();
-                int fila = vmovimiento.jtbEntradas.getSelectedRow();
-                parametros.put("codigo", vmovimiento.jtbEntradas.getValueAt(fila, 0));
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-                JasperViewer view = new JasperViewer(jprint, false);
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else if (e.getSource() == vmovimiento.btnReporteSalida) {
-
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteSalidas.jasper";
-                Map parametros = new HashMap();
-                int fila = vmovimiento.jtbSalida.getSelectedRow();
-                parametros.put("codigo", vmovimiento.jtbSalida.getValueAt(fila, 0));
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmovimiento.getConexion());
-                JasperViewer view = new JasperViewer(jprint, false);
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
         } else if (e.getSource() == vmovimiento.btnModificarSalida) {
             
             int row = vmovimiento.jtbSalida.getSelectedRow();
@@ -523,7 +515,10 @@ public final class CtlrMovimiento implements ActionListener {
                 vmodsalida.setVisible(true);
                 llenarComboBox(cbxmodelo);
                 vmodsalida.txtModCodigoS.setText(movimiento.getCodigo());
-                vmodsalida.txtModFechaS.setText(movimiento.getFecha() + "");
+                Date date = movimiento.getFecha();
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha = format.format(date);
+                vmodsalida.txtModFechaS.setText(fecha);
                 vmodsalida.txtModObservacionesS.setText(movimiento.getObservaciones());
                 limpiarSalidas(modelomods);
                 vmodsalida.cbxModClienteS.getModel().setSelectedItem(new ComboBoxHelper(cmovimiento.getIdClienteByName(vmovimiento.jtbSalida.getValueAt(row, 2).toString()), vmovimiento.jtbSalida.getValueAt(row, 2).toString()));
@@ -547,9 +542,11 @@ public final class CtlrMovimiento implements ActionListener {
             String fecha = vmodsalida.txtModFechaS.getText();
             Date date = null;
             try {
-                date = new SimpleDateFormat("yyyy-MM-dd").parse(fecha);
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                System.out.println(fecha);
+                date = format.parse(fecha);
             } catch (ParseException ex) {
-                System.out.println(ex);
+                JOptionPane.showMessageDialog(null, "Fecha inválida");
             }
             movimiento.setFecha(date);
             movimiento.setObservaciones(vmodsalida.txtModObservacionesS.getText());
@@ -620,7 +617,10 @@ public final class CtlrMovimiento implements ActionListener {
                 vmodentrada.setVisible(true);
                 llenarComboBox(cbxmodelo2);
                 vmodentrada.txtModCodigoE.setText(movimiento.getCodigo());
-                vmodentrada.txtModFechaE.setText(movimiento.getFecha() + "");
+                Date date = movimiento.getFecha();
+                SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+                String fecha = format.format(date);
+                vmodentrada.txtModFechaE.setText(fecha);
                 vmodentrada.txtModObservacionesE.setText(movimiento.getObservaciones());
                 limpiarSalidas(modelomode);
                 vmodentrada.cbxModClienteE.getModel().setSelectedItem(new ComboBoxHelper(cmovimiento.getIdClienteByName(vmovimiento.jtbEntradas.getValueAt(row, 2).toString()), vmovimiento.jtbEntradas.getValueAt(row, 2).toString()));

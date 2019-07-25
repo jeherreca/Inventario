@@ -12,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -95,7 +97,6 @@ public final class CtlrMarca implements ActionListener {
         this.vmarca.btnInsertarMarca.addActionListener(this);
         this.vmarca.btnModificarMarca.addActionListener(this);
         this.vmarca.btnBuscarMarca.addActionListener(this);
-        this.vmarca.btnReporteMarca.addActionListener(this);
         this.vmarca.btnExcelMarca.addActionListener(this);
         this.vmarca.jtbMarca.setModel(modelomarca);
         this.vmarca.jtbMarca.setDefaultEditor(Object.class, null);
@@ -131,10 +132,8 @@ public final class CtlrMarca implements ActionListener {
     }
 
     public void changeLabels() {
-        int fila = vmarca.jtbMarca.getSelectedRow();
-        String id = vmarca.jtbMarca.getValueAt(fila, 0).toString();
-        vmarca.lblPesoMarca.setText(cmarca.getSumPeso(Integer.parseInt(id)) + "");
-        vmarca.lblCantidadMarca.setText(cmarca.getSum(Integer.parseInt(id), "cantidad") + "");
+        vmarca.lblPesoMarca.setText(cmarca.getSumPeso(marca.getId()) + "");
+        vmarca.lblCantidadMarca.setText(cmarca.getSum((marca.getId()), "cantidad") + "");
     }
 
     public void llenarTabla() {
@@ -170,7 +169,14 @@ public final class CtlrMarca implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         //**Boton buscar**
         if (e.getSource() == vmarca.btnBuscarMarca) {
-            marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
+            try{
+                marca.setId(Integer.parseInt(vmarca.txtIDMarca.getText()));
+                llenarTablaProductos();
+                changeLabels();
+            }catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "El ID tiene que ser un número");
+            }
+
             if (cmarca.buscar(marca)) {
                 vmarca.txtIDMarca.setText(marca.getId() + "");
                 vmarca.txtNombreMarca.setText(marca.getNombre());
@@ -224,30 +230,6 @@ public final class CtlrMarca implements ActionListener {
                 limpiar();
                 llenarTabla();
             }
-            //**Boton reporte**
-        } else if (e.getSource() == vmarca.btnReporteMarca) {
-
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteMarca.jasper";
-
-                Map parametros = new HashMap();
-                int fila = vmarca.jtbMarca.getSelectedRow();
-
-                parametros.put("id", vmarca.jtbMarca.getValueAt(fila, 0));
-
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cmarca.getConexion());
-
-                JasperViewer view = new JasperViewer(jprint, false);
-
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
             //**Boton excel**
         } else if (e.getSource() == vmarca.btnExcelMarca) {
 
@@ -279,7 +261,7 @@ public final class CtlrMarca implements ActionListener {
                 fuenteTitulo.setFontHeightInPoints((short) 14);
                 tituloEstilo.setFont(fuenteTitulo);
 
-                String[] cabecera = {"Código", "Nombre", "Descripción", "Peso", "Cantidad"};
+                String[] cabecera = {"Código", "Nombre", "Cantidad", "Peso Unitario", "Peso Total"};
 
                 CellStyle headerStyle = book.createCellStyle();
                 headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
@@ -316,7 +298,7 @@ public final class CtlrMarca implements ActionListener {
                 datosEstilo.setBorderTop(BorderStyle.THIN);
                 datosEstilo.setBorderRight(BorderStyle.THIN);
 
-                String sql = "SELECT codigo, nombre, descripcion, peso, cantidad FROM inventario.activo WHERE idmarca = ?";
+                String sql = "SELECT codigo, nombre, cantidad, peso, peso*cantidad as pesoTotal FROM inventario.activo WHERE idmarca = ?";
 
                 ps = con.prepareStatement(sql);
                 int fila = vmarca.jtbMarca.getSelectedRow();
@@ -330,10 +312,10 @@ public final class CtlrMarca implements ActionListener {
                     for (int i = 0; i < numCol; i++) {
                         Cell celdaDatos = filaDatos.createCell(i);
                         celdaDatos.setCellStyle(datosEstilo);
-                        if (i == 3) {
+                        if (i == 3 || i==4) {
                             celdaDatos.setCellValue(rs.getDouble(i + 1));
                         } else {
-                            if (i == 4) {
+                            if (i == 2) {
                                 celdaDatos.setCellValue(rs.getInt(i + 1));
                             } else {
                                 celdaDatos.setCellValue(rs.getString(i + 1));
@@ -348,7 +330,7 @@ public final class CtlrMarca implements ActionListener {
                 celdaTitulo.setCellStyle(tituloEstilo);
                 celdaTitulo.setCellValue("Lista de materiales de la marca: " + nombreCliente);
 
-                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 3));
+                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 4));
 
                 sheet.autoSizeColumn(0);
                 sheet.autoSizeColumn(1);
@@ -358,14 +340,14 @@ public final class CtlrMarca implements ActionListener {
 
                 sheet.setZoom(150);
                 Date date = new Date();
-                String strDateFormat = "yyyy-MM-dd";
+                String strDateFormat = "yyyy-MM-dd HHmmss";
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
 
                 FileOutputStream fileOut = new FileOutputStream("excel\\Reporte" + nombreCliente + " " + formattedDate + ".xlsx");
                 book.write(fileOut);
                 fileOut.close();
-
+                JOptionPane.showMessageDialog(null, "El archivo ha sido creado");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException | SQLException ex) {

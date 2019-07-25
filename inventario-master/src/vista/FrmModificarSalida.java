@@ -50,7 +50,7 @@ public class FrmModificarSalida extends javax.swing.JFrame {
 
         jLabel1.setText("Código: ");
 
-        jLabel2.setText("Fecha:");
+        jLabel2.setText("Fecha (dd/mm/aaaa):");
 
         jLabel3.setText("Observaciones:");
 
@@ -171,7 +171,7 @@ public class FrmModificarSalida extends javax.swing.JFrame {
                             .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnRemoverModSalida)
                     .addComponent(btnAceptarMod))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))

@@ -57,7 +57,7 @@ public class FrmSalida extends javax.swing.JFrame {
             }
         });
 
-        jLabel3.setText("Fecha:");
+        jLabel3.setText("Fecha (dd/mm/aaaa):");
 
         txtObservacionesSalida.setColumns(20);
         txtObservacionesSalida.setRows(5);

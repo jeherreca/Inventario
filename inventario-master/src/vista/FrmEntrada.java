@@ -51,7 +51,7 @@ public class FrmEntrada extends javax.swing.JFrame {
 
         btnAceptarEntrada.setText("Enviar entrada");
 
-        jLabel3.setText("Fecha:");
+        jLabel3.setText("Fecha (dd/mm/aaaa):");
 
         jLabel4.setText("Código:");
 
@@ -182,9 +182,9 @@ public class FrmEntrada extends javax.swing.JFrame {
                             .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAceptarEntrada)
-                    .addComponent(btnRestarEntrada))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRestarEntrada)
+                    .addComponent(btnAceptarEntrada))
                 .addContainerGap())
         );
 

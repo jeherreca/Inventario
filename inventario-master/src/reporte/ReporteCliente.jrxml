@@ -6,6 +6,7 @@
 	<parameter name="id" class="java.lang.Integer">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="realPath" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT activo.codigo, activo.nombre, activo.descripcion, ubicacion_productos.cantidad, ubicaciones.nombre as cliente FROM (( inventario.activo INNER JOIN inventario.ubicacion_productos ON activo.idproductos = ubicacion_productos.idproductos) INNER JOIN inventario.ubicaciones ON ubicacion_productos.idubicacion = ubicaciones.idubicaciones ) WHERE ubicacion_productos.idubicacion = $P{id}]]>
 	</queryString>
@@ -40,7 +41,7 @@
 			</textField>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="0" y="0" width="171" height="102" uuid="d70018e5-b83b-4519-beac-4baf88503a90"/>
-				<imageExpression><![CDATA["C:\\Users\\administrator\\Documents\\NetBeansProjects\\Inventario\\Inventario-master\\src\\resources\\logoandamas.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{realPath}+"/logoandamas.jpg"]]></imageExpression>
 			</image>
 		</band>
 	</title>

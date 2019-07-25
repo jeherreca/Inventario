@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,6 +23,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
@@ -93,7 +97,6 @@ public final class CtlrProducto implements ActionListener {
         this.vproducto.btnBuscar.addActionListener(this);
         this.vproducto.btnInsertar.addActionListener(this);
         this.vproducto.btnModificar.addActionListener(this);
-        this.vproducto.btnReporteProducto.addActionListener(this);
         this.vproducto.btnExcelActivo.addActionListener(this);
         this.vproducto.jtbActivos.setModel(modelo);
         this.vproducto.jtbActivos.setDefaultEditor(Object.class, null);
@@ -114,6 +117,7 @@ public final class CtlrProducto implements ActionListener {
             array[5] = productos.get(i).getStock();
             modelo.addRow(array);
         }
+        changeLabels();
     }
 
     public void limpiarTabla() {
@@ -135,7 +139,10 @@ public final class CtlrProducto implements ActionListener {
         vproducto.cbxMarca.getModel().setSelectedItem(new ComboBoxHelper(Integer.parseInt(rs[5]), cproducto.getNombreMarca(Integer.parseInt(rs[5]))));
         vproducto.txtCantidad.setText(rs[6]);
     }
-
+    public void changeLabels(){
+        vproducto.lblPesoActivo.setText(cproducto.getSumPeso()+"");
+        vproducto.lblCantidadActivo.setText(cproducto.getSum()+"");
+    }
     public void limpiar() {
         vproducto.txtIDActivo.setText("");
         vproducto.txtCodigoActivos.setText("");
@@ -155,6 +162,7 @@ public final class CtlrProducto implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        
         if (e.getSource() == vproducto.btnBuscar) {
             producto.setCodigo(vproducto.txtCodigoActivos.getText());
             if (cproducto.buscar(producto)) {
@@ -169,7 +177,6 @@ public final class CtlrProducto implements ActionListener {
                 JOptionPane.showMessageDialog(null, "No se encontro registro");
                 limpiar();
             }
-
         } else if (e.getSource() == vproducto.btnEliminar) {
 
             producto.setId(Integer.parseInt(vproducto.txtIDActivo.getText()));
@@ -223,24 +230,6 @@ public final class CtlrProducto implements ActionListener {
                 limpiar();
                 llenarTabla();
             }
-        } else if (e.getSource() == vproducto.btnReporteProducto) {
-
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteActivos.jasper";
-
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, null, cproducto.getConexion());
-
-                JasperViewer view = new JasperViewer(jprint, false);
-
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
         } else if (e.getSource() == vproducto.btnExcelActivo) {
 
             Workbook book = new XSSFWorkbook();
@@ -278,7 +267,7 @@ public final class CtlrProducto implements ActionListener {
 
                 sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 3));
 
-                String[] cabecera = {"Código", "Nombre", "Descripción", "Peso", "Cantidad", "Marca"};
+                String[] cabecera = {"Código", "Nombre", "Marca", "Peso Unitario", "Peso Total", "Cantidad"};
 
                 CellStyle headerStyle = book.createCellStyle();
                 headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
@@ -349,14 +338,14 @@ public final class CtlrProducto implements ActionListener {
 
                 sheet.setZoom(150);
                 Date date = new Date();
-                String strDateFormat = "yyyy-MM-dd";
+                String strDateFormat = "yyyy-MM-dd HHmmss";
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
 
                 try (FileOutputStream fileOut = new FileOutputStream("excel\\ReporteInventario " + formattedDate + ".xlsx")) {
                     book.write(fileOut);
                 }
-
+                JOptionPane.showMessageDialog(null, "El archivo ha sido creado");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException | SQLException ex) {

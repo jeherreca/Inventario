@@ -48,7 +48,65 @@ public class ConsultasProducto extends Conexion {
             }
         }
     }
+    public double getSumPeso() {
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
 
+        String sql = "SELECT peso, cantidad FROM activo ";
+
+        double resultado = 0;
+
+        try {
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+
+                resultado = resultado + (rs.getDouble("peso") * rs.getInt("cantidad"));
+            }
+
+            return resultado;
+        } catch (SQLException e) {
+            System.out.println(e);
+            return resultado;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+    }
+    public int getSum() {
+        PreparedStatement ps;
+        ResultSet rs;
+        Connection con = getConnection();
+        
+        String sql = "SELECT SUM(cantidad) FROM activo";
+        
+        int resultado = 0;
+        
+        try{
+            ps = con.prepareStatement(sql);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                resultado = rs.getInt("SUM(cantidad)");
+            }
+            
+            return resultado;
+        }catch(SQLException e){
+            System.out.println(e);
+            return resultado;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+    }
     public ArrayList<Producto> getProductos() {
         PreparedStatement ps;
         ResultSet rs;

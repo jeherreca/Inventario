@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -92,7 +94,6 @@ public final class CtlrUbicacion implements ActionListener {
                 changeLabels();
             }
         });
-        this.vproveedor.btnReporteCliente.addActionListener(this);
         this.vproveedor.btnBuscarProveedor.addActionListener(this);
         this.vproveedor.btnInsertarProveedor.addActionListener(this);
         this.vproveedor.btnEliminarProveedor.addActionListener(this);
@@ -148,7 +149,6 @@ public final class CtlrUbicacion implements ActionListener {
 
     public void getSelectedProveedor() {
         int fila = vproveedor.jtbProveedores.getSelectedRow();
-        System.out.println(fila);
         String codigo = vproveedor.jtbProveedores.getValueAt(fila, 0).toString();
         String[] rs = cproveedor.buscarElemento(codigo);
         proveedor.setId(Integer.parseInt(rs[0]));
@@ -172,7 +172,13 @@ public final class CtlrUbicacion implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == vproveedor.btnBuscarProveedor) {
-            proveedor.setId(Integer.parseInt(vproveedor.txtIDProveedor.getText()));
+            try{
+                proveedor.setId(Integer.parseInt(vproveedor.txtIDProveedor.getText()));
+                llenarTablaProductos();
+                changeLabels();
+            }catch(NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "El ID tiene que ser un número");
+            }
             if (cproveedor.buscar(proveedor)) {
                 vproveedor.txtIDProveedor.setText(proveedor.getId() + "");
                 vproveedor.txtNombreProveedor.setText(proveedor.getNombre());
@@ -230,29 +236,6 @@ public final class CtlrUbicacion implements ActionListener {
                 limpiar();
                 llenarTabla();
             }
-        } else if (e.getSource() == vproveedor.btnReporteCliente) {
-
-            try {
-                JasperReport reporte = null;
-                String path = "src\\reporte\\ReporteCliente.jasper";
-
-                Map parametros = new HashMap();
-                int fila = vproveedor.jtbProveedores.getSelectedRow();
-
-                parametros.put("id", vproveedor.jtbProveedores.getValueAt(fila, 0));
-
-                reporte = (JasperReport) JRLoader.loadObjectFromFile(path);
-
-                JasperPrint jprint = JasperFillManager.fillReport(reporte, parametros, cproveedor.getConexion());
-
-                JasperViewer view = new JasperViewer(jprint, false);
-
-                view.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-                view.setVisible(true);
-            } catch (JRException ex) {
-                Logger.getLogger(CtlrUbicacion.class.getName()).log(Level.SEVERE, null, ex);
-            }
         } else if (e.getSource() == vproveedor.btnExcelCliente) {
 
             Workbook book = new XSSFWorkbook();
@@ -282,7 +265,7 @@ public final class CtlrUbicacion implements ActionListener {
                 fuenteTitulo.setFontHeightInPoints((short) 14);
                 tituloEstilo.setFont(fuenteTitulo);
 
-                String[] cabecera = {"Código", "Nombre", "Descripción", "Cantidad"};
+                String[] cabecera = {"Código", "Nombre", "Marca", "Cantidad", "Peso Unitario", "Peso Total"};
 
                 CellStyle headerStyle = book.createCellStyle();
                 headerStyle.setFillForegroundColor(IndexedColors.DARK_RED.getIndex());
@@ -319,7 +302,7 @@ public final class CtlrUbicacion implements ActionListener {
                 datosEstilo.setBorderTop(BorderStyle.THIN);
                 datosEstilo.setBorderRight(BorderStyle.THIN);
 
-                String sql = "SELECT activo.codigo, activo.nombre, activo.descripcion, ubicacion_productos.cantidad, ubicaciones.nombre as cliente FROM (( inventario.activo INNER JOIN inventario.ubicacion_productos ON activo.idproductos = ubicacion_productos.idproductos) INNER JOIN inventario.ubicaciones ON ubicacion_productos.idubicacion = ubicaciones.idubicaciones ) WHERE ubicacion_productos.idubicacion = ?";
+                String sql = "SELECT activo.codigo, activo.nombre, marca.nombre, ubicacion_productos.cantidad, activo.peso, activo.peso*ubicacion_productos.cantidad as pesoTotal, ubicaciones.nombre as cliente FROM ((( inventario.activo INNER JOIN inventario.ubicacion_productos ON activo.idproductos = ubicacion_productos.idproductos) INNER JOIN inventario.ubicaciones ON ubicacion_productos.idubicacion = ubicaciones.idubicaciones )INNER JOIN inventario.marca ON marca.idmarca = activo.idmarca) WHERE ubicacion_productos.idubicacion = ?";
 
                 ps = con.prepareStatement(sql);
                 int fila = vproveedor.jtbProveedores.getSelectedRow();
@@ -337,7 +320,11 @@ public final class CtlrUbicacion implements ActionListener {
                         if (i == 3) {
                             celdaDatos.setCellValue(rs.getInt(i + 1));
                         } else {
-                            celdaDatos.setCellValue(rs.getString(i + 1));
+                            if (i == 4 || i == 5) {
+                                celdaDatos.setCellValue(rs.getDouble(i + 1));
+                            }else{
+                                celdaDatos.setCellValue(rs.getString(i + 1)); 
+                            }
                         }
                     }
                     numFilaDatos++;
@@ -348,23 +335,25 @@ public final class CtlrUbicacion implements ActionListener {
                 celdaTitulo.setCellStyle(tituloEstilo);
                 celdaTitulo.setCellValue("Lista de materiales en " + nombreCliente);
 
-                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 2));
+                sheet.addMergedRegion(new CellRangeAddress(1, 2, 1, 4));
 
                 sheet.autoSizeColumn(0);
                 sheet.autoSizeColumn(1);
                 sheet.autoSizeColumn(2);
                 sheet.autoSizeColumn(3);
+                sheet.autoSizeColumn(4);
+                sheet.autoSizeColumn(5);
 
                 sheet.setZoom(150);
                 Date date = new Date();
-                String strDateFormat = "yyyy-MM-dd";
+                String strDateFormat = "yyyy-MM-dd HHmmss";
                 DateFormat dateFormat = new SimpleDateFormat(strDateFormat);
                 String formattedDate = dateFormat.format(date);
 
                 FileOutputStream fileOut = new FileOutputStream("excel\\Reporte" + nombreCliente + " " + formattedDate + ".xlsx");
                 book.write(fileOut);
                 fileOut.close();
-
+                JOptionPane.showMessageDialog(null, "El archivo ha sido creado");
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(CtlrBodega.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException | SQLException ex) {

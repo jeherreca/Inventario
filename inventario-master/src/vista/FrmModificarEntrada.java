@@ -50,7 +50,7 @@ public class FrmModificarEntrada extends javax.swing.JFrame {
 
         jLabel1.setText("Código: ");
 
-        jLabel2.setText("Fecha:");
+        jLabel2.setText("Fecha (dd/mm/aaaa):");
 
         jLabel3.setText("Observaciones:");
 

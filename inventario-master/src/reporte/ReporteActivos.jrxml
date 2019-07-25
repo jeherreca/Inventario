@@ -2,7 +2,8 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report name" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="976390f2-0d6e-4c19-a7ab-6fc15c31faf0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="4"/>
+	<parameter name="realPath" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT *, marca.nombre AS marca FROM activo JOIN marca]]>
 	</queryString>
@@ -45,7 +46,7 @@
 			</staticText>
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="0" y="0" width="171" height="102" uuid="1faf22ae-a3fd-48fb-9001-289d76e93d4e"/>
-				<imageExpression><![CDATA["C:\\Users\\administrator\\Documents\\NetBeansProjects\\Inventario\\Inventario-master\\src\\resources\\logoandamas.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{realPath}+"/logoandamas.jpg"]]></imageExpression>
 			</image>
 			<textField pattern="EEEEE dd MMMMM yyyy">
 				<reportElement x="455" y="82" width="100" height="20" uuid="d5e74161-8fae-4e60-aa9e-659e45e22350"/>

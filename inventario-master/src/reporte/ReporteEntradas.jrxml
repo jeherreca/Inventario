@@ -6,6 +6,7 @@
 	<parameter name="codigo" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
 	</parameter>
+	<parameter name="realPath" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT *, activo.codigo as producto, ubicaciones.nombre as ubicacion FROM (((movimiento JOIN movimiento_productos ON movimiento.identrada = movimiento_productos.idmovimiento)JOIN activo ON movimiento_productos.idproducto = activo.idproductos) JOIN ubicaciones ON ubicaciones.idubicaciones = movimiento.idubicacion) WHERE tipo ="entrada" AND movimiento.codigo = $P{codigo}]]>
 	</queryString>
@@ -75,7 +76,7 @@
 		<band height="102" splitType="Stretch">
 			<image hAlign="Center" vAlign="Middle">
 				<reportElement x="0" y="0" width="171" height="102" uuid="b37da17d-6c44-47c9-b1fa-f3589944d5a1"/>
-				<imageExpression><![CDATA["C:\\Users\\administrator\\Documents\\NetBeansProjects\\Inventario\\Inventario-master\\src\\resources\\logoandamas.jpg"]]></imageExpression>
+				<imageExpression><![CDATA[$P{realPath}+"/logoandamas.jpg"]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="171" y="11" width="297" height="51" uuid="79a10dc8-d5ad-4ecd-9a0c-5304537f1ca8"/>

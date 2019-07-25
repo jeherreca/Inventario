@@ -143,7 +143,68 @@ public class ConsultasMovimiento extends Conexion {
             }
         }
     }
-
+    public double getSumPesoMovProd(String codigo){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT activo.peso*movimiento_productos.cantidad as pesoMovimiento FROM movimiento INNER JOIN (movimiento_productos INNER JOIN activo ON idproducto = idproductos) ON identrada = idmovimiento WHERE movimiento.codigo=?";
+        
+        double resultado = 0;
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setString(1, codigo);
+            rs = ps.executeQuery();
+            
+            while(rs.next()){
+                resultado = resultado + rs.getDouble(1);
+            }
+            
+            return resultado;
+        }catch(SQLException e){
+            System.out.println(e);
+            return resultado;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+        
+    }
+    public int getSumMov(String codigo){
+        PreparedStatement ps;
+        Connection con = getConnection();
+        ResultSet rs;
+        
+        String sql = "SELECT SUM(cantidad) FROM movimiento INNER JOIN movimiento_productos ON identrada = idmovimiento WHERE codigo =?";
+        
+        int resultado = 0;
+        
+        try{
+            ps = con.prepareStatement(sql);
+            ps.setString(1, codigo);
+            rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                resultado = rs.getInt(1);
+            }
+            
+            return resultado;
+        }catch(SQLException e){
+            System.out.println(e);
+            return resultado;
+        }finally{
+            try{
+                con.close();
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        }
+        
+    }
     public ArrayList<Object[]> getSalidasProd(String codigo) {
         PreparedStatement ps;
         Connection con = getConnection();
